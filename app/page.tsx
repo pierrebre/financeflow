@@ -7,9 +7,8 @@ export default async function Home() {
 	const cryptoData: Coin[] = await crypto.json();
 
 	return (
-		<main className="flex min-h-screen flex-col items-center ">
-			<h1>FinanceFlow</h1>
-			<div className="mt-10 w-3/4">
+		<main className="flex flex-col items-center ">
+			<div className="w-full">
 				<DataTable columns={columns} data={cryptoData} />
 			</div>
 		</main>
