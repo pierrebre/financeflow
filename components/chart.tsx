@@ -5,7 +5,9 @@ import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { DataPrice } from '@/types/Coin';
+import { ChartInterval } from '@/types/Chart';
 
 const chartConfig = {
 	price: {
@@ -16,15 +18,17 @@ const chartConfig = {
 
 type Props = {
 	readonly priceData: DataPrice[];
+	readonly unity: ChartInterval;
 };
 
-export function Chart({ priceData }: Props) {
-	console.log(priceData);
+export function Chart({ priceData, unity }: Props) {
 	return (
 		<Card>
-			<CardHeader>
-				<CardTitle>Price Chart</CardTitle>
-				<CardDescription>Showing total visitors for the last 6 months</CardDescription>
+			<CardHeader className="flex lg:flex-row justify-between">
+				<div className="lg:mb-0 mb-4">
+					<CardTitle>Price Chart</CardTitle>
+					<CardDescription>Showing total visitors for the last 6 months</CardDescription>
+				</div>
 			</CardHeader>
 			<CardContent>
 				<ChartContainer config={chartConfig}>
@@ -37,8 +41,7 @@ export function Chart({ priceData }: Props) {
 						}}
 					>
 						<CartesianGrid vertical={false} />
-						<XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.slice(0, 3)} />
-						<ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
+						<XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.slice(0, 3)} /> <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
 						<Area dataKey="price" type="natural" fill="var(--color-desktop)" fillOpacity={0.4} stroke="var(--color-desktop)" />
 					</AreaChart>
 				</ChartContainer>
