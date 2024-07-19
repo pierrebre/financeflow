@@ -13,7 +13,10 @@ export const fetchCoinData = async (coinId: string): Promise<Coin> => {
 		current_price: data.market_data.current_price.usd,
 		market_cap: data.market_data.market_cap.usd,
 		market_cap_rank: data.market_cap_rank,
-		price_change_percentage_24h: data.market_data.price_change_percentage_24h
+		price_change_percentage_24h: data.market_data.price_change_percentage_24h,
+		price_change_percentage_7d: data.market_data.price_change_percentage_7d,
+		price_change_percentage_30d: data.market_data.price_change_percentage_30d,
+		price_change_percentage_1y: data.market_data.price_change_percentage_1y,
 	};
 };
 
