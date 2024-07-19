@@ -27,7 +27,10 @@ const CoinModel = z.object({
 	atl_date: z.string(),
 	roi: z.null(),
 	last_updated: z.string(),
-	price_change_percentage_1h_in_currency: z.number()
+	price_change_percentage_1h_in_currency: z.number(),
+	price_change_percentage_7d: z.number(),
+	price_change_percentage_30d: z.number(),
+	price_change_percentage_1y: z.number()
 });
 
 const CoinSchemaTable = CoinModel.omit({

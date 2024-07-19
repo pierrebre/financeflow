@@ -1,11 +1,13 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
+import { TrendingDown, TrendingUp } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { DataPrice } from '@/types/Coin';
+import { ChartInterval } from '@/types/Chart';
+import { getDateRangeMessage } from '@/lib/utils';
 
 const chartConfig = {
 	price: {
@@ -16,15 +18,20 @@ const chartConfig = {
 
 type Props = {
 	readonly priceData: DataPrice[];
+	readonly unity: ChartInterval;
+	readonly priceChangePercentage: number | null;
 };
 
-export function Chart({ priceData }: Props) {
-	console.log(priceData);
+export function Chart({ priceData, unity, priceChangePercentage }: Props) {
+	const period = unity === '1' ? 'day' : unity === '7' ? 'week' : unity === '30' ? 'month' : 'year';
+
 	return (
 		<Card>
-			<CardHeader>
-				<CardTitle>Price Chart</CardTitle>
-				<CardDescription>Showing total visitors for the last 6 months</CardDescription>
+			<CardHeader className="flex lg:flex-row justify-between">
+				<div className="lg:mb-0 mb-4">
+					<CardTitle>Price Chart</CardTitle>
+					<CardDescription>Showing the price for the last {period}</CardDescription>
+				</div>
 			</CardHeader>
 			<CardContent>
 				<ChartContainer config={chartConfig}>
@@ -47,9 +54,15 @@ export function Chart({ priceData }: Props) {
 				<div className="flex w-full items-start gap-2 text-sm">
 					<div className="grid gap-2">
 						<div className="flex items-center gap-2 font-medium leading-none">
-							Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+							{priceChangePercentage !== null && priceChangePercentage !== undefined ? (
+								<>
+									{priceChangePercentage > 0 ? 'Trending up' : 'Trending down'} by {priceChangePercentage.toFixed(2)}% last {period} {priceChangePercentage < 0 ? <TrendingDown className="h-4 w-4" /> : <TrendingUp className="h-4 w-4" />}
+								</>
+							) : (
+								'Price change data unavailable'
+							)}
 						</div>
-						<div className="flex items-center gap-2 leading-none text-muted-foreground">January - June 2024</div>
+						<div className="flex items-center gap-2 leading-none text-muted-foreground">{getDateRangeMessage(unity)}</div>
 					</div>
 				</div>
 			</CardFooter>
