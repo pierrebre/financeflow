@@ -6,6 +6,7 @@ import { Chart } from '@/components/chart';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useState } from 'react';
 import { ChartInterval } from '@/types/Chart';
+import { Star } from 'lucide-react';
 
 type Props = {
 	readonly params: {
@@ -53,10 +54,23 @@ export default function CoinPage({ params }: Props) {
 	return (
 		<main className="flex lg:flex-row flex-col">
 			<section className="border-gray-200 lg:w-1/4">
-				<h1 className="scroll-m-20 text-3xl bold tracking-tight lg:text-4xl first-letter:capitalize mb-2">{params.id}</h1>
+				<div className="flex items-center gap-6 mb-2">
+					<h1 className="scroll-m-20 text-3xl bold tracking-tight lg:text-4xl first-letter:capitalize">{params.id}</h1>
+					<span className="bg-slate-200 p-1.5 rounded-lg">
+						<Star className="text-gray-400 h-5 w-5 " />
+					</span>
+				</div>
 				<p className="lg:text-2xl text-xl font-extrabold">
 					{'$ ' + coin?.current_price.toFixed(2)} <span className="text-green-800 font-medium lg:text-lg">{coin?.price_change_percentage_24h.toFixed(2)}%</span>
 				</p>
+				<div className='flex flex-col gap-2 my-6 text-[#acb0b9]'>
+					<p>Market Cap <span className='text-black'>{coin?.market_cap.toFixed(2)}</span></p>
+					<p>Circulating Supply <span className='text-black'>{coin?.circulating_supply.toFixed(2)}</span></p>
+					<p>Max supply <span className='text-black'>{coin?.max_supply}</span></p>
+				</div>
+				<div>
+					<p>Converter</p>
+				</div>
 			</section>
 			<section className="lg:w-3/4 w-full lg:mt-0 mt-10">
 				<ToggleGroup className="lg:justify-end mb-4" type="single" defaultValue="30" onValueChange={(value: ChartInterval) => handleSelect(value)}>

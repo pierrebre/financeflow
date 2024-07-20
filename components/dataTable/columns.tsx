@@ -2,10 +2,14 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { CoinTable } from '@/types/Coin';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export const columns: ColumnDef<CoinTable>[] = [
+	{
+		accessorKey: 'favorite',
+		header: ''
+	},
 	{
 		accessorKey: 'name',
 		header: 'Name'
@@ -22,7 +26,7 @@ export const columns: ColumnDef<CoinTable>[] = [
 		accessorKey: 'current_price',
 		header: ({ column }) => {
 			return (
-				<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+				<Button variant="ghost" className='gap-1 p-0' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
 					Price
 				</Button>
 			);
@@ -36,7 +40,7 @@ export const columns: ColumnDef<CoinTable>[] = [
 		accessorKey: 'market_cap',
 		header: ({ column }) => {
 			return (
-				<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+				<Button variant="ghost" className='gap-1 p-0' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
 					Market Cap
 				</Button>
 			);
@@ -50,7 +54,7 @@ export const columns: ColumnDef<CoinTable>[] = [
 		accessorKey: 'market_cap_change_percentage_24h',
 		header: ({ column }) => {
 			return (
-				<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+				<Button variant="ghost" className='gap-1 p-0' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
 					24h Change
 				</Button>
 			);
@@ -64,7 +68,7 @@ export const columns: ColumnDef<CoinTable>[] = [
 		accessorKey: 'circulating_supply',
 		header: ({ column }) => {
 			return (
-				<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+				<Button variant="ghost" className='gap-1 p-0' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
 					Circulating Supply
 				</Button>
 			);

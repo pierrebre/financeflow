@@ -17,6 +17,9 @@ export const fetchCoinData = async (coinId: string): Promise<Coin> => {
 		price_change_percentage_7d: data.market_data.price_change_percentage_7d,
 		price_change_percentage_30d: data.market_data.price_change_percentage_30d,
 		price_change_percentage_1y: data.market_data.price_change_percentage_1y,
+		circulating_supply: data.market_data.circulating_supply,
+		max_supply: data.market_data.max_supply,
+
 	};
 };
 
