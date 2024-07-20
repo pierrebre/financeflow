@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang="en">
-			<body className={cn('bg-background font-sans antialiased flex', fontSans.variable)}>
+			<body className={cn('bg-background font-sans antialiased flex flex-col', fontSans.variable)}>
 				<Providers>
 					<div className="container mx-auto mt-4">
 						<Navbar />

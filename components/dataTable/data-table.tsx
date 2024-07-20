@@ -5,6 +5,8 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable, SortingState, ge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useState } from 'react';
 import Link from 'next/link';
+import { Star } from 'lucide-react';
+import { set } from 'date-fns';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -24,6 +26,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 		}
 	});
 
+	const handleFavorite = (coinId: string) => {
+		console.log(coinId);
+	};
+
 	return (
 		<div className="rounded-md border">
 			<Table>
@@ -39,12 +45,18 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 				<TableBody>
 					{table.getRowModel().rows?.length ? (
 						table.getRowModel().rows.map((row) => (
-							<TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+							<TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>
-										<Link className="" href={`/coin/${row.original.id}`} key={row.id}>
-											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</Link>
+										{cell.column.columnDef.accessorKey === 'favorite' ? (
+											<button onClick={() => handleFavorite(row.original.id)}>
+												<Star className="text-gray-400 h-5 w-5" />
+											</button>
+										) : (
+											<Link className="" href={`/coin/${row.original.id}`} key={row.id}>
+												{flexRender(cell.column.columnDef.cell, cell.getContext())}
+											</Link>
+										)}
 									</TableCell>
 								))}
 							</TableRow>
