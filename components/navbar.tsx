@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { CircleUserIcon } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Navbar() {
@@ -19,7 +19,7 @@ export default function Navbar() {
 			</div>
 			<div className="flex items-center">
 				<Link href="#" className="font-medium text-primary">
-					<Image src="/avataaars.png" alt="Github" className="" width={48} height={48} />
+					<CircleUserIcon className="h-10 w-10" strokeWidth={1.5} />
 				</Link>
 			</div>
 		</nav>
