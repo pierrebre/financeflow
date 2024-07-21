@@ -38,8 +38,9 @@ const CoinSchemaTable = CoinModel.omit({
 	image: true,
 	current_price: true,
 	market_cap: true,
+	market_cap_rank: true,
 	market_cap_change_percentage_24h: true,
-	circulating_supply: true
+	circulating_supply: true,
 });
 
 const DataPriceModel = z.object({

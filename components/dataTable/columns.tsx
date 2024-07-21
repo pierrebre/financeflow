@@ -11,8 +11,22 @@ export const columns: ColumnDef<CoinTable>[] = [
 		header: ''
 	},
 	{
+		accessorKey: 'market_cap_rank',
+		header: ({ column }) => {
+			return (
+				<Button variant="ghost" className="gap-1 p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+					#
+				</Button>
+			);
+		}
+	},
+	{
 		accessorKey: 'name',
-		header: 'Name'
+		header: 'Name',
+		cell: ({ getValue }) => {
+			const value = getValue() as string;
+			return value;
+		}
 	},
 	{
 		accessorKey: 'symbol',
@@ -26,7 +40,7 @@ export const columns: ColumnDef<CoinTable>[] = [
 		accessorKey: 'current_price',
 		header: ({ column }) => {
 			return (
-				<Button variant="ghost" className='gap-1 p-0' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+				<Button variant="ghost" className="gap-1 p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
 					Price
 				</Button>
 			);
@@ -40,7 +54,7 @@ export const columns: ColumnDef<CoinTable>[] = [
 		accessorKey: 'market_cap',
 		header: ({ column }) => {
 			return (
-				<Button variant="ghost" className='gap-1 p-0' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+				<Button variant="ghost" className="gap-1 p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
 					Market Cap
 				</Button>
 			);
@@ -54,28 +68,30 @@ export const columns: ColumnDef<CoinTable>[] = [
 		accessorKey: 'market_cap_change_percentage_24h',
 		header: ({ column }) => {
 			return (
-				<Button variant="ghost" className='gap-1 p-0' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+				<Button variant="ghost" className="gap-1 p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
 					24h Change
 				</Button>
 			);
 		},
 		cell: ({ getValue }) => {
 			const value = getValue() as number | null;
-			return value ? value.toFixed(2) + '%' : '-';
+
+			return value ? value < 0 ? <span className="text-[#ea3943]">{value.toFixed(2) + '%'}</span> : <span className="text-[#3aa655]">{value.toFixed(2) + '%'}</span> : '-';
 		}
 	},
 	{
 		accessorKey: 'circulating_supply',
 		header: ({ column }) => {
 			return (
-				<Button variant="ghost" className='gap-1 p-0' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+				<Button variant="ghost" className="gap-1 p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
 					Circulating Supply
 				</Button>
 			);
 		},
-		cell: ({ getValue }) => {
+		cell: ({ getValue, row }) => {
+			const symbol = row.original.symbol;
 			const value = getValue() as number | null;
-			return value ? value.toFixed(0) : '-';
+			return value ? value.toFixed(0) + ' ' + symbol.toUpperCase() : '-';
 		}
 	}
 ];

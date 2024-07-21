@@ -9,7 +9,7 @@ export const fetchCoinData = async (coinId: string): Promise<Coin> => {
 		id: data.id,
 		name: data.name,
 		symbol: data.symbol,
-		image: data.image.large,
+		image: data.image.small,
 		current_price: data.market_data.current_price.usd,
 		market_cap: data.market_data.market_cap.usd,
 		market_cap_rank: data.market_cap_rank,
@@ -19,7 +19,6 @@ export const fetchCoinData = async (coinId: string): Promise<Coin> => {
 		price_change_percentage_1y: data.market_data.price_change_percentage_1y,
 		circulating_supply: data.market_data.circulating_supply,
 		max_supply: data.market_data.max_supply,
-
 	};
 };
 
