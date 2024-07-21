@@ -4,9 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCoinData, fetchPriceHistory } from '../../../lib/api';
 import { Chart } from '@/components/chart';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChartInterval } from '@/types/Chart';
 import { Star } from 'lucide-react';
+import Converter from '@/components/converter';
 
 type Props = {
 	readonly params: {
@@ -50,7 +51,6 @@ export default function CoinPage({ params }: Props) {
 		setPriceChangePercentage(percentageChangeMap[value]);
 		setInterval(value);
 	};
-
 	return (
 		<main className="flex lg:flex-row flex-col">
 			<section className="border-gray-200 lg:w-1/4">
@@ -61,16 +61,23 @@ export default function CoinPage({ params }: Props) {
 					</span>
 				</div>
 				<p className="lg:text-2xl text-xl font-extrabold">
-					{'$ ' + coin?.current_price.toFixed(2)} <span className="text-green-800 font-medium lg:text-lg">{coin?.price_change_percentage_24h.toFixed(2)}%</span>
+					{'$ ' + coin?.current_price?.toFixed(2)} <span className={`${coin?.price_change_percentage_24h != null && coin?.price_change_percentage_24h < 0 ? 'text-[#ea3943]' : 'text-[#16c784]'} font-medium lg:text-lg`}>{coin?.price_change_percentage_24h?.toFixed(2) ?? 'N/A'}%</span>
 				</p>
-				<div className='flex flex-col gap-2 my-6 text-[#acb0b9]'>
-					<p>Market Cap <span className='text-black'>{coin?.market_cap.toFixed(2)}</span></p>
-					<p>Circulating Supply <span className='text-black'>{coin?.circulating_supply.toFixed(2)}</span></p>
-					<p>Max supply <span className='text-black'>{coin?.max_supply}</span></p>
+				<div className="flex flex-col gap-2 my-6 text-[#acb0b9]">
+					<p>
+						Market Cap <span className="text-black">{coin?.market_cap.toFixed(2)} $</span>
+					</p>
+					<p>
+						Circulating Supply{' '}
+						<span className="text-black">
+							{coin?.circulating_supply.toFixed(2)} {coin?.symbol.toUpperCase()}
+						</span>
+					</p>
+					<p>
+						Max supply <span className="text-black">{coin?.max_supply != null && coin?.max_supply > 0 ? coin.max_supply + ' ' + coin.symbol.toUpperCase() : '∞'}</span>
+					</p>
 				</div>
-				<div>
-					<p>Converter</p>
-				</div>
+				{coin && <Converter Coin={coin} />}
 			</section>
 			<section className="lg:w-3/4 w-full lg:mt-0 mt-10">
 				<ToggleGroup className="lg:justify-end mb-4" type="single" defaultValue="30" onValueChange={(value: ChartInterval) => handleSelect(value)}>
