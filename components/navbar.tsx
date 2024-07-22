@@ -1,5 +1,5 @@
-import { CircleUserIcon } from 'lucide-react';
 import Link from 'next/link';
+import { SignIn } from './sign-in';
 
 export default function Navbar() {
 	return (
@@ -10,7 +10,7 @@ export default function Navbar() {
 				</Link>
 			</div>
 			<div className="flex items-center gap-4">
-{/* 				<Link href="/" className="font-medium text-primary">
+				{/* 				<Link href="/" className="font-medium text-primary">
 					Home
 				</Link>
 				<Link href="/blog" className="font-medium text-primary">
@@ -18,9 +18,7 @@ export default function Navbar() {
 				</Link> */}
 			</div>
 			<div className="flex items-center">
-				<Link href="#" className="font-medium text-primary">
-					<CircleUserIcon className="h-10 w-10" strokeWidth={1.5} />
-				</Link>
+				<SignIn />
 			</div>
 		</nav>
 	);
