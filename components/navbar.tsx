@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { SignIn } from './sign-in';
+import { SignIn } from './auth/signin';
 
 export default function Navbar() {
 	return (

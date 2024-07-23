@@ -1,4 +1,4 @@
-import { signIn } from '../app/auth';
+import { signIn } from '../../app/auth';
 import { CircleUserIcon } from 'lucide-react';
 
 export function SignIn() {
@@ -6,7 +6,7 @@ export function SignIn() {
 		<form
 			action={async () => {
 				'use server';
-				await signIn('google');
+				await signIn();
 			}}
 		>
 			<button type="submit">
