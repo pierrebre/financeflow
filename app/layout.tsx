@@ -11,6 +11,7 @@ const fontSans = FontSans({
 	subsets: ['latin'],
 	variable: '--font-sans'
 });
+
 export const metadata: Metadata = {
 	title: 'FinanceFlow',
 	description: 'FinanceFlow is a web application that provides a platform for tracking and analyzing cryptocurrency data.'
