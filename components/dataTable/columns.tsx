@@ -2,7 +2,6 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { CoinTable } from '@/types/Coin';
-import { ArrowUpDown, MoreHorizontal, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export const columns: ColumnDef<CoinTable>[] = [
