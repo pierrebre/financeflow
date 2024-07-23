@@ -12,11 +12,7 @@ interface DataTableProps<TData, TValue> {
 	readonly data: TData[];
 }
 
-interface Data {
-	id: string;
-}
-
-export function DataTable<TValue>({ columns, data }: DataTableProps<Data, TValue>) {
+export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const table = useReactTable({
 		data,
@@ -47,9 +43,9 @@ export function DataTable<TValue>({ columns, data }: DataTableProps<Data, TValue
 				</TableHeader>
 				<TableBody>
 					{table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row: Row<Data>) => (
+						table.getRowModel().rows.map((row: any) => (
 							<TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
-								{row.getVisibleCells().map((cell: Cell<Data, TValue>) => (
+								{row.getVisibleCells().map((cell: any) => (
 									<TableCell key={cell.id}>
 										{cell.column.id === 'favorite' ? (
 											<button onClick={() => handleFavorite(row.original.id)}>
