@@ -1,19 +1,22 @@
 'use client';
 
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable, SortingState, getSortedRowModel } from '@tanstack/react-table';
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable, SortingState, getSortedRowModel, Row, Cell } from '@tanstack/react-table';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useState } from 'react';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
-import { set } from 'date-fns';
 
 interface DataTableProps<TData, TValue> {
-	columns: ColumnDef<TData, TValue>[];
-	data: TData[];
+	readonly columns: ColumnDef<TData, TValue>[];
+	readonly data: TData[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+interface Data {
+	id: string;
+}
+
+export function DataTable<TValue>({ columns, data }: DataTableProps<Data, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const table = useReactTable({
 		data,
@@ -44,11 +47,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 				</TableHeader>
 				<TableBody>
 					{table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row) => (
+						table.getRowModel().rows.map((row: Row<Data>) => (
 							<TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
-								{row.getVisibleCells().map((cell) => (
+								{row.getVisibleCells().map((cell: Cell<Data, TValue>) => (
 									<TableCell key={cell.id}>
-										{cell.column.columnDef.accessorKey === 'favorite' ? (
+										{cell.column.id === 'favorite' ? (
 											<button onClick={() => handleFavorite(row.original.id)}>
 												<Star className="text-gray-400 h-5 w-5" />
 											</button>
