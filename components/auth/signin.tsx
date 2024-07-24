@@ -1,17 +1,14 @@
-import { signIn } from '../../app/auth';
-import { CircleUserIcon } from 'lucide-react';
+import { signIn } from '../../app/(auth)/auth';
 
 export function SignIn() {
 	return (
 		<form
 			action={async () => {
 				'use server';
-				await signIn();
+				await signIn('github', { redirectTo: '/dashboard' });
 			}}
 		>
-			<button type="submit">
-				<CircleUserIcon className="h-10 w-10" strokeWidth={1.5} />
-			</button>
+			<button type="submit">Sign In</button>
 		</form>
 	);
 }
