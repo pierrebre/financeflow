@@ -24,7 +24,7 @@ export default async function Navbar() {
 					<DropdownMenuTrigger>
 						{' '}
 						<Avatar>
-							<AvatarImage src="https://github.com/shadcn.png" />
+							<AvatarImage src={session?.user?.image ?? 'https://github.com/shadcn.png'} alt={session?.user?.name ?? ''} />
 							<AvatarFallback>CN</AvatarFallback>
 						</Avatar>
 					</DropdownMenuTrigger>
@@ -32,7 +32,7 @@ export default async function Navbar() {
 						<DropdownMenuLabel>My Account</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
-							<Link href="/dashboard">{session !== null ? 'Dashboard' : 'Sign In'}</Link>
+							<Link href={ session !== null ? '/dashboard' : '/api/auth/signin'}>{session !== null ? 'Dashboard' : 'Sign In'}</Link>
 						</DropdownMenuItem>
 						{session !== null && (
 							<DropdownMenuItem>
