@@ -1,4 +1,4 @@
-import type { Coin, DataPrice } from '@/types/Coin';
+import type { Coin, DataPrice } from '@/lib/types/Coin';
 import { format } from 'date-fns';
 
 export const fetchCoinData = async (coinId: string): Promise<Coin> => {
