@@ -17,7 +17,6 @@ export default async function Dashboard() {
 				<TabsList className="">
 					<TabsTrigger value="profile">Profile</TabsTrigger>
 					<TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-					<TabsTrigger value="watchlist">Watchlist</TabsTrigger>
 				</TabsList>
 				<TabsContent value="profile">
 					<Card>
@@ -31,7 +30,6 @@ export default async function Dashboard() {
 									<AvatarImage src={session?.user?.image ?? ''} alt={session?.user?.name ?? ''} />
 									<AvatarFallback>CN</AvatarFallback>
 								</Avatar>
-								<Input placeholder="Username" className="mt-2" value={session?.user?.email?.split('@')[0] ?? ''} />
 								<Input placeholder="Name" disabled className="mt-2" value={session?.user?.name ?? ''} />
 								<Input placeholder="Email" disabled className="mt-2" value={session?.user?.email ?? ''} />
 							</form>
@@ -50,22 +48,6 @@ export default async function Dashboard() {
 						<CardContent>
 							<form>
 								<h2>Portfolio content goes here...</h2>
-							</form>
-						</CardContent>
-						<CardFooter className="border-t px-6 py-4">
-							<Button>Save</Button>
-						</CardFooter>
-					</Card>
-				</TabsContent>
-				<TabsContent value="watchlist">
-					<Card>
-						<CardHeader>
-							<CardTitle>Watchlist</CardTitle>
-							<CardDescription>Manage your watchlist.</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<form>
-								<h2>Watchlist content goes here...</h2>
 							</form>
 						</CardContent>
 						<CardFooter className="border-t px-6 py-4">

@@ -32,7 +32,11 @@ export default async function Navbar() {
 						<DropdownMenuLabel>My Account</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
-							<Link href={ session !== null ? '/dashboard' : '/api/auth/signin'}>{session !== null ? 'Dashboard' : 'Sign In'}</Link>
+							<Link href="/watchlist">Watchlist</Link>
+						</DropdownMenuItem>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem>
+							<Link href={session !== null ? '/dashboard' : '/api/auth/signin'}>{session !== null ? 'Dashboard' : 'Sign In'}</Link>
 						</DropdownMenuItem>
 						{session !== null && (
 							<DropdownMenuItem>
