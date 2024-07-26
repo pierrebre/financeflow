@@ -1,11 +1,11 @@
 'use client';
 
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable, SortingState, getSortedRowModel, Row, Cell } from '@tanstack/react-table';
-
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable, SortingState, getSortedRowModel } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useState } from 'react';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
+import { useState, useCallback, useMemo } from 'react';
+import useLocalStorage from '@/lib/hooks/useLocalStorage';
 
 interface DataTableProps<TData, TValue> {
 	readonly columns: ColumnDef<TData, TValue>[];
@@ -14,6 +14,8 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
+	const [noLoginWatchlistIds, setNoLoginWatchlistIds] = useLocalStorage<string[]>('noLoginWatchlistIds', []);
+
 	const table = useReactTable({
 		data,
 		columns,
@@ -25,9 +27,16 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 		}
 	});
 
-	const handleFavorite = (coinId: string) => {
-		console.log(coinId);
-	};
+	const handleFavorite = useCallback(
+		(coinId: string) => {
+			const updatedIds = noLoginWatchlistIds.includes(coinId) ? noLoginWatchlistIds.filter((id) => id !== coinId) : [...noLoginWatchlistIds, coinId];
+
+			setNoLoginWatchlistIds(updatedIds);
+		},
+		[noLoginWatchlistIds, setNoLoginWatchlistIds]
+	);
+
+	const memoizedColumns = useMemo(() => columns, [columns]);
 
 	return (
 		<div className="rounded-md border">
@@ -35,9 +44,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (
 						<TableRow key={headerGroup.id}>
-							{headerGroup.headers.map((header) => {
-								return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
-							})}
+							{headerGroup.headers.map((header) => (
+								<TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
+							))}
 						</TableRow>
 					))}
 				</TableHeader>
@@ -49,10 +58,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 									<TableCell key={cell.id}>
 										{cell.column.id === 'favorite' ? (
 											<button onClick={() => handleFavorite(row.original.id)}>
-												<Star className="text-gray-400 h-5 w-5" />
+												<Star className={`text-[#a6b1c2] h-5 w-5 ${noLoginWatchlistIds.includes(row.original.id) ? 'fill-[#f6b87e] text-[#f6b87e]' : ''}`} />
 											</button>
 										) : (
-											<Link className="" href={`/coin/${row.original.id}`} key={row.id}>
+											<Link href={`/coin/${row.original.id}`} key={row.id}>
 												{flexRender(cell.column.columnDef.cell, cell.getContext())}
 											</Link>
 										)}
@@ -62,7 +71,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 						))
 					) : (
 						<TableRow>
-							<TableCell colSpan={columns.length} className="h-24 text-center">
+							<TableCell colSpan={memoizedColumns.length} className="h-24 text-center">
 								No results.
 							</TableCell>
 						</TableRow>
