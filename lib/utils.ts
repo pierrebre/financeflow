@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { format, subDays, subWeeks, subMonths, subYears } from 'date-fns';
-import { ChartInterval } from '@/types/Chart';
+import { ChartInterval } from '@/lib/types/Chart';
 
 export const getDateRangeMessage = (unity: ChartInterval): string => {
 	const today = new Date();
