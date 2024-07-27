@@ -5,8 +5,8 @@ import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { DataPrice } from '@/lib/types/Coin';
-import { ChartInterval } from '@/lib/types/Chart';
+import { DataPrice } from '@/types/Coin';
+import { ChartInterval } from '@/types/Chart';
 import { getDateRangeMessage } from '@/lib/utils';
 
 const chartConfig = {

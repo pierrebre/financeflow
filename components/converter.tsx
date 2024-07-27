@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Coin } from '@/lib/types/Coin';
+import { Coin } from '@/types/Coin';
 
 type Props = {
 	readonly Coin: Coin;
