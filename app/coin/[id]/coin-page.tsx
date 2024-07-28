@@ -4,10 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCoinData, fetchPriceHistory } from '../../../lib/api';
 import { Chart } from '@/components/chart';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChartInterval } from '@/lib/types/Chart';
 import { Star } from 'lucide-react';
 import Converter from '@/components/converter';
+import useLocalStorage from '@/lib/hooks/useLocalStorage';
 
 type Props = {
 	readonly params: {
@@ -23,6 +24,7 @@ export default function CoinPage({ params }: Props) {
 
 	const [interval, setInterval] = useState<ChartInterval>('30');
 	const [priceChangePercentage, setPriceChangePercentage] = useState<number | null>(coin?.price_change_percentage_24h ?? null);
+	const [noLoginWatchlistIds, setNoLoginWatchlistIds] = useLocalStorage<string[]>('noLoginWatchlistIds', []);
 
 	const {
 		data: priceHistory,
@@ -51,14 +53,21 @@ export default function CoinPage({ params }: Props) {
 		setPriceChangePercentage(percentageChangeMap[value]);
 		setInterval(value);
 	};
+
+	const handleFavoriteToggle = () => {
+		const updatedIds = noLoginWatchlistIds.includes(params.id) ? noLoginWatchlistIds.filter((id) => id !== params.id) : [...noLoginWatchlistIds, params.id];
+
+		setNoLoginWatchlistIds(updatedIds);
+	};
+
 	return (
 		<main className="flex lg:flex-row flex-col">
 			<section className="border-gray-200 lg:w-1/4">
 				<div className="flex items-center gap-6 mb-2">
 					<h1 className="scroll-m-20 text-3xl bold tracking-tight lg:text-4xl first-letter:capitalize">{params.id}</h1>
-					<span className="bg-slate-200 p-1.5 rounded-lg">
-						<Star className="text-gray-400 h-5 w-5 " />
-					</span>
+					<button className="bg-slate-200 p-1.5 rounded-lg" onClick={handleFavoriteToggle}>
+						<Star className={`text-[#a6b1c2] h-5 w-5 ${noLoginWatchlistIds.includes(params.id) ? 'fill-[#f6b87e] text-[#f6b87e]' : ''}`} aria-pressed={noLoginWatchlistIds.includes(params.id)} />
+					</button>
 				</div>
 				<p className="lg:text-2xl text-xl font-extrabold">
 					{'$ ' + coin?.current_price?.toFixed(2)} <span className={`${coin?.price_change_percentage_24h != null && coin?.price_change_percentage_24h < 0 ? 'text-[#ea3943]' : 'text-[#16c784]'} font-medium lg:text-lg`}>{coin?.price_change_percentage_24h?.toFixed(2) ?? 'N/A'}%</span>
