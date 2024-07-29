@@ -9,6 +9,7 @@ import { ChartInterval } from '@/lib/types/Chart';
 import { Star } from 'lucide-react';
 import Converter from '@/components/converter';
 import useLocalStorage from '@/lib/hooks/useLocalStorage';
+import { Progress } from '@/components/ui/progress';
 
 type Props = {
 	readonly params: {
@@ -80,6 +81,7 @@ export default function CoinPage({ params }: Props) {
 						Circulating Supply{' '}
 						<span className="text-black">
 							{coin?.circulating_supply.toFixed(2)} {coin?.symbol.toUpperCase()}
+							<Progress className="w-3/4 my-2" value={coin?.circulating_supply} />
 						</span>
 					</p>
 					<p>
