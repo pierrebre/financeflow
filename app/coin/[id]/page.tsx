@@ -18,8 +18,8 @@ export default async function Coin({ params }: Props) {
 	});
 
 	await queryClient.prefetchQuery({
-		queryKey: ['priceHistory', params.id, '365'],
-		queryFn: () => fetchPriceHistory(params.id, '365')
+		queryKey: ['priceHistory', params.id, '30'],
+		queryFn: () => fetchPriceHistory(params.id, '30	')
 	});
 
 	return (
