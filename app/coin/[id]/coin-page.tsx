@@ -77,13 +77,18 @@ export default function CoinPage({ params }: Props) {
 					<p>
 						Market Cap <span className="text-black">{coin?.market_cap.toFixed(2)} $</span>
 					</p>
-					<p>
+					<div>
 						Circulating Supply{' '}
 						<span className="text-black">
 							{coin?.circulating_supply.toFixed(2)} {coin?.symbol.toUpperCase()}
-							<Progress className="w-3/4 my-2" value={coin?.circulating_supply} />
 						</span>
-					</p>
+						{coin?.max_supply != null && coin?.max_supply > 0 ? (
+							<div className="flex items-end">
+								<Progress className="w-[60%] my-2 h-3 mr-4" value={((coin?.circulating_supply ?? 0) / (coin?.max_supply ?? 0)) * 100} />
+								{(((coin?.circulating_supply ?? 0) / (coin?.max_supply ?? 0)) * 100).toFixed(2)}%
+							</div>
+						) : null}
+					</div>
 					<p>
 						Max supply <span className="text-black">{coin?.max_supply != null && coin?.max_supply > 0 ? coin.max_supply + ' ' + coin.symbol.toUpperCase() : '∞'}</span>
 					</p>
