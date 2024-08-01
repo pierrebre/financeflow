@@ -58,7 +58,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 									<TableCell key={cell.id}>
 										{cell.column.id === 'favorite' ? (
 											<button onClick={() => handleFavorite(row.original.id)}>
-												<Star className={`text-[#a6b1c2] h-5 w-5 ${noLoginWatchlistIds.includes(row.original.id) ? 'fill-[#f6b87e] text-[#f6b87e]' : ''}`} />
+												<Star className={`text-[#a6b1c2] h-5 w-5 ${noLoginWatchlistIds.includes(row.original.id) ? 'fill-[#f6b87e] text-[#f6b87e]' : ''}`} name="favorite_icon" />
 											</button>
 										) : (
 											<Link href={`/coin/${row.original.id}`} key={row.id}>
