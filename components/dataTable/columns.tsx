@@ -75,7 +75,12 @@ export const columns: ColumnDef<CoinTable>[] = [
 		cell: ({ getValue }) => {
 			const value = getValue() as number | null;
 
-			return value ? value < 0 ? <span className="text-[#ea3943]">{value.toFixed(2) + '%'}</span> : <span className="text-[#3aa655]">{value.toFixed(2) + '%'}</span> : '-';
+			if (value === null) {
+				return '-';
+			}
+
+			const formattedValue = value.toFixed(2) + '%';
+			return value < 0 ? <span className="text-[#db121c]">{formattedValue}</span> : <span className="text-[#1d5a2e]">{formattedValue}</span>;
 		}
 	},
 	{

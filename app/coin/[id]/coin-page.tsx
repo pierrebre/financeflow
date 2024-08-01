@@ -71,7 +71,7 @@ export default function CoinPage({ params }: Props) {
 					</button>
 				</div>
 				<p className="lg:text-2xl text-xl font-extrabold">
-					{'$ ' + coin?.current_price?.toFixed(2)} <span className={`${coin?.price_change_percentage_24h != null && coin?.price_change_percentage_24h < 0 ? 'text-[#ea3943]' : 'text-[#16c784]'} font-medium lg:text-lg`}>{coin?.price_change_percentage_24h?.toFixed(2) ?? 'N/A'}%</span>
+					{'$ ' + coin?.current_price?.toFixed(2)} <span className={`${coin?.price_change_percentage_24h != null && coin?.price_change_percentage_24h < 0 ? 'text-[#db121c]' : 'text-[#1d5a2e]'} font-medium lg:text-lg`}>{coin?.price_change_percentage_24h?.toFixed(2) ?? 'N/A'}%</span>
 				</p>
 				<div className="flex flex-col gap-2 my-6 text-[#acb0b9]">
 					<p>
