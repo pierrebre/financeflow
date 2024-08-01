@@ -21,7 +21,7 @@ export default async function Navbar() {
 			</div>
 			<div className="flex items-center">
 				<DropdownMenu>
-					<DropdownMenuTrigger name="user_icon">
+					<DropdownMenuTrigger name="user_icon" aria-label='User button dropdown'>
 						{' '}
 						<Avatar>
 							<AvatarImage src={session?.user?.image ?? 'https://github.com/shadcn.png'} alt={session?.user?.name ?? ''} />

@@ -57,7 +57,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 								{row.getVisibleCells().map((cell: any) => (
 									<TableCell key={cell.id}>
 										{cell.column.id === 'favorite' ? (
-											<button onClick={() => handleFavorite(row.original.id)}>
+											<button onClick={() => handleFavorite(row.original.id)} id="favorite_icon" aria-label='Favorite'>
 												<Star className={`text-[#a6b1c2] h-5 w-5 ${noLoginWatchlistIds.includes(row.original.id) ? 'fill-[#f6b87e] text-[#f6b87e]' : ''}`} name="favorite_icon" />
 											</button>
 										) : (
