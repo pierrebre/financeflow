@@ -15,7 +15,7 @@ export default function Watchlist() {
 	});
 
 	return (
-		<main className="">
+		<main className="min-h-screen">
 			<div>
 				<h1 className="scroll-m-20 text-xl font-extrabold tracking-tight lg:text-2xl text-center pb-4">Watchlist</h1>
 				<DataTable columns={columns} data={coinsWatchlist || []} />
