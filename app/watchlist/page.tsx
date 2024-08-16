@@ -3,16 +3,26 @@
 import { columns } from '@/components/dataTable/columns';
 import { DataTable } from '@/components/dataTable/data-table';
 import { fetchCoinsWatchlist } from '@/lib/api';
-import useLocalStorage from '@/lib/hooks/useLocalStorage';
+import useFavoritesManager from '@/lib/hooks/useFavorites';
 import { useQuery } from '@tanstack/react-query';
 
 export default function Watchlist() {
-	const [favorites] = useLocalStorage<string[]>('noLoginWatchlistIds', []);
+	// Utilisation du hook personnalisé pour gérer les favoris
+	const { favorites } = useFavoritesManager();
 
-	const { data: coinsWatchlist } = useQuery({
+	// Utilisation de React Query pour récupérer les coins de la watchlist
+	const {
+		data: coinsWatchlist,
+		error,
+		isLoading
+	} = useQuery({
 		queryKey: ['coinsWatchlist', favorites],
-		queryFn: () => fetchCoinsWatchlist(favorites)
+		queryFn: () => fetchCoinsWatchlist(favorites),
+		enabled: favorites.length > 0
 	});
+
+	if (isLoading) return <div>Loading...</div>;
+	if (error) return <div>Error fetching watchlist coins.</div>;
 
 	return (
 		<main className="min-h-screen">

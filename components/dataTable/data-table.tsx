@@ -1,11 +1,10 @@
 'use client';
-
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable, SortingState, getSortedRowModel } from '@tanstack/react-table';
+import { useMemo, useState } from 'react';
+import { ColumnDef, flexRender, useReactTable, SortingState, getCoreRowModel, getSortedRowModel } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
-import { useState, useCallback, useMemo } from 'react';
-import useLocalStorage from '@/lib/hooks/useLocalStorage';
+import useFavoritesManager from '@/lib/hooks/useFavorites';
 
 interface DataTableProps<TData, TValue> {
 	readonly columns: ColumnDef<TData, TValue>[];
@@ -14,7 +13,7 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
-	const [noLoginWatchlistIds, setNoLoginWatchlistIds] = useLocalStorage<string[]>('noLoginWatchlistIds', []);
+	const { favorites, toggleFavorite } = useFavoritesManager();
 
 	const table = useReactTable({
 		data,
@@ -22,19 +21,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 		getCoreRowModel: getCoreRowModel(),
 		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
-		state: {
-			sorting
-		}
+		state: { sorting }
 	});
-
-	const handleFavorite = useCallback(
-		(coinId: string) => {
-			const updatedIds = noLoginWatchlistIds.includes(coinId) ? noLoginWatchlistIds.filter((id) => id !== coinId) : [...noLoginWatchlistIds, coinId];
-
-			setNoLoginWatchlistIds(updatedIds);
-		},
-		[noLoginWatchlistIds, setNoLoginWatchlistIds]
-	);
 
 	const memoizedColumns = useMemo(() => columns, [columns]);
 
@@ -51,14 +39,14 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 					))}
 				</TableHeader>
 				<TableBody>
-					{table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row: any) => (
+					{table.getRowModel()?.rows?.length ? (
+						table.getRowModel().rows.map((row) => (
 							<TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
-								{row.getVisibleCells().map((cell: any) => (
+								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>
 										{cell.column.id === 'favorite' ? (
-											<button onClick={() => handleFavorite(row.original.id)} id="favorite_icon" aria-label='Favorite'>
-												<Star className={`text-[#a6b1c2] h-5 w-5 ${noLoginWatchlistIds.includes(row.original.id) ? 'fill-[#f6b87e] text-[#f6b87e]' : ''}`} name="favorite_icon" />
+											<button onClick={() => toggleFavorite(row.original.id)} aria-label="Favorite">
+												<Star className={`text-[#a6b1c2] h-5 w-5 ${favorites.includes(row.original.id) ? 'fill-[#f6b87e] text-[#f6b87e]' : ''}`} />
 											</button>
 										) : (
 											<Link href={`/coin/${row.original.id}`} key={row.id}>
