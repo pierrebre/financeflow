@@ -12,7 +12,6 @@ function useFavoritesManager(): FavoriteHookResponse {
 
 	useEffect(() => {
 		const loadFavorites = async () => {
-			console.log(status);
 			if (status === 'authenticated') {
 				try {
 					const response = await fetch('/api/favorites');
@@ -39,7 +38,7 @@ function useFavoritesManager(): FavoriteHookResponse {
 			if (status === 'authenticated') {
 				try {
 					await fetch('/api/favorites', {
-						method: 'POST',
+						method: isFavorite ? 'DELETE' : 'POST',
 						headers: {
 							'Content-Type': 'application/json'
 						},
