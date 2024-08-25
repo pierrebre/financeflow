@@ -7,7 +7,6 @@ export async function GET(request: Request) {
 	if (!session) {
 		return NextResponse.json({ message: 'You are not logged in.' }, { status: 401 });
 	}
-
 	const userId = session.user?.id;
 	if (!userId) {
 		return NextResponse.json({ message: 'User ID is missing.' }, { status: 400 });
