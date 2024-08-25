@@ -42,14 +42,14 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 					{table.getRowModel()?.rows?.length ? (
 						table.getRowModel().rows.map((row) => (
 							<TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
-								{row.getVisibleCells().map((cell) => (
+								{row.getVisibleCells().map((cell: any) => (
 									<TableCell key={cell.id}>
 										{cell.column.id === 'favorite' ? (
-											<button onClick={() => toggleFavorite(row.original.id)} aria-label="Favorite">
-												<Star className={`text-[#a6b1c2] h-5 w-5 ${favorites.includes(row.original.id) ? 'fill-[#f6b87e] text-[#f6b87e]' : ''}`} />
+											<button onClick={() => toggleFavorite((row.original as any).id)} aria-label="Favorite">
+												<Star className={`text-[#a6b1c2] h-5 w-5 ${favorites.includes((row.original as any).id as string) ? 'fill-[#f6b87e] text-[#f6b87e]' : ''}`} />
 											</button>
 										) : (
-											<Link href={`/coin/${row.original.id}`} key={row.id}>
+											<Link href={`/coin/${(row.original as any).id as string}`} key={row.id}>
 												{flexRender(cell.column.columnDef.cell, cell.getContext())}
 											</Link>
 										)}
