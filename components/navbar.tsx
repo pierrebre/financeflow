@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { auth } from '../app/(auth)/auth';
 import { SignOut } from './auth/signout';
+import { LoginButton } from './auth/login-button';
 export default async function Navbar() {
 	const session = await auth();
 
@@ -21,7 +22,7 @@ export default async function Navbar() {
 			</div>
 			<div className="flex items-center">
 				<DropdownMenu>
-					<DropdownMenuTrigger name="user_icon" aria-label='User button dropdown'>
+					<DropdownMenuTrigger name="user_icon" aria-label="User button dropdown">
 						{' '}
 						<Avatar>
 							<AvatarImage src={session?.user?.image ?? 'https://github.com/shadcn.png'} alt={session?.user?.name ?? ''} />
@@ -36,7 +37,8 @@ export default async function Navbar() {
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
-							<Link href={session !== null ? '/dashboard' : '/api/auth/signin'}>{session !== null ? 'Dashboard' : 'Sign In'}</Link>
+							<LoginButton>Sign In</LoginButton>
+							{/* <Link href={session !== null ? '/dashboard' : '/api/auth/signin'}>{session !== null ? 'Dashboard' : 'Sign In'}</Link> */}
 						</DropdownMenuItem>
 						{session !== null && (
 							<DropdownMenuItem>
