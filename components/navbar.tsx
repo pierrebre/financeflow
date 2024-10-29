@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { auth } from '../app/(auth)/auth';
+import { auth } from '../auth';
 import { SignOut } from './auth/signout';
 import { LoginButton } from './auth/login-button';
 export default async function Navbar() {

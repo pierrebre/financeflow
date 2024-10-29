@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { signOut } from '../../app/(auth)/auth';
+import { signOut } from '../../auth';
 
 export function SignOut() {
 	return (
