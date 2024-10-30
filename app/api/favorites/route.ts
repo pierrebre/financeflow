@@ -1,6 +1,7 @@
 import { auth } from '../../../auth';
 import { NextResponse } from 'next/server';
 import prisma from '../../../lib/prisma';
+import { getUserById } from '@/data/user';
 
 export async function GET(request: Request) {
 	const session = await auth();
@@ -43,22 +44,12 @@ export async function POST(request: Request) {
 	}
 
 	const userId = session.user?.id;
-	if (!userId) {
-		return NextResponse.json({ message: 'User ID is missing.' }, { status: 400 });
-	}
+	if (!userId) return NextResponse.json({ message: 'User ID is missing.' }, { status: 400 });
 
 	try {
-		const user = await prisma.user.findUnique({
-			where: { UserId: userId }
-		});
+		const user = await getUserById(userId);
 
-		if (!user) {
-			await prisma.user.create({
-				data: {
-					UserId: userId
-				}
-			});
-		}
+		if (!user) return NextResponse.json({ message: 'User not found.' }, { status: 404 });
 
 		let watchlist = await prisma.watchlist.findUnique({
 			where: { userId: userId }
@@ -78,9 +69,7 @@ export async function POST(request: Request) {
 		const body = await request.json();
 		const coinId = body.coinId;
 
-		if (!coinId) {
-			return NextResponse.json({ message: 'No coinId provided.' }, { status: 400 });
-		}
+		if (!coinId) return NextResponse.json({ message: 'No coinId provided.' }, { status: 400 });
 
 		let coin = await prisma.coin.findUnique({
 			where: { CoinId: coinId }
