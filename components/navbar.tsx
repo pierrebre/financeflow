@@ -38,7 +38,6 @@ export default async function Navbar() {
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
 							<LoginButton>Sign In</LoginButton>
-							{/* <Link href={session !== null ? '/dashboard' : '/api/auth/signin'}>{session !== null ? 'Dashboard' : 'Sign In'}</Link> */}
 						</DropdownMenuItem>
 						{session !== null && (
 							<DropdownMenuItem>

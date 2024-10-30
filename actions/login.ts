@@ -20,7 +20,6 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 		await signIn('credentials', { email, password, redirectTo: DEFAULT_LOGIN_REDIRECT });
 	} catch (error) {
 		if (error instanceof AuthError) {
-			console.log(error);
 			if (error.type == 'CallbackRouteError') {
 				throw new Error('Invalid credentials');
 			} else {

@@ -22,7 +22,6 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 	if (existingUser) {
 		throw new Error('Email already exists');
 	}
-
 	await prisma.user.create({
 		data: {
 			email,

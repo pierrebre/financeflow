@@ -8,7 +8,7 @@ export const publicRoutes = ['/', '/coin', '/watchlist'];
  * An array of routes used for authentification
  * Authentification required
  */
-export const authRoutes = ['/auth/login', '/auth/register'];
+export const authRoutes = ['/auth/login', '/auth/register', '/auth/error'];
 
 /**
  *  Prefix for API authentification routes
