@@ -24,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			if (account?.provider !== 'credentials') return true;
 
 			// Deny login without email verification
-			const userExists = await getUserById(user.id);
+			const userExists = await getUserById(user.id ?? '');
 
 			if (!userExists?.emailVerified) return false;
 
@@ -36,7 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			}
 
 			if (token.role && session.user) {
-				session.user.role = token.role as UserRole;
+				session.user.role = token.role as UserRole | undefined;
 			}
 
 			return session;
