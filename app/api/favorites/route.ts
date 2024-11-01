@@ -59,7 +59,7 @@ export async function POST(request: Request) {
 			watchlist = await prisma.watchlist.create({
 				data: {
 					user: {
-						connect: { UserId: userId }
+						connect: { id: userId }
 					},
 					coins: { create: [] }
 				}

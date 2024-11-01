@@ -35,14 +35,16 @@ export default async function Navbar() {
 						<DropdownMenuItem>
 							<Link href="/watchlist">Watchlist</Link>
 						</DropdownMenuItem>
-						<DropdownMenuSeparator />
 						<DropdownMenuItem>
-							<LoginButton>Sign In</LoginButton>
+							<Link href="/dashboard">Dashboard</Link>
 						</DropdownMenuItem>
 						{session !== null && (
-							<DropdownMenuItem>
-								<SignOut />
-							</DropdownMenuItem>
+							<>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem>
+									<SignOut />
+								</DropdownMenuItem>
+							</>
 						)}
 					</DropdownMenuContent>
 				</DropdownMenu>
