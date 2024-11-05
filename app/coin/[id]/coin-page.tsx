@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { ChartInterval } from '@/schemas';
 import { Star } from 'lucide-react';
 import Converter from '@/components/converter';
-import useFavorites from '@/lib/hooks/useFavorites';
+import useFavorites from '@/lib/hooks/use-favorites';
 import { Progress } from '@/components/ui/progress';
 
 type Props = {

@@ -1,14 +1,15 @@
-import { auth } from '../../../auth';
 import { NextResponse } from 'next/server';
 import prisma from '../../../lib/prisma';
 import { getUserById } from '@/data/user';
+import { currentUser } from '@/lib/utils';
 
 export async function GET(request: Request) {
-	const session = await auth();
-	if (!session) {
+	const user = await currentUser();
+
+	if (!user) {
 		return NextResponse.json({ message: 'You are not logged in.' }, { status: 401 });
 	}
-	const userId = session.user?.id;
+	const userId = user?.id;
 	if (!userId) {
 		return NextResponse.json({ message: 'User ID is missing.' }, { status: 400 });
 	}
@@ -38,12 +39,12 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-	const session = await auth();
-	if (!session) {
+	const user = await currentUser();
+	if (!user) {
 		return NextResponse.json({ message: 'You are not logged in.' }, { status: 401 });
 	}
 
-	const userId = session.user?.id;
+	const userId = user?.id;
 	if (!userId) return NextResponse.json({ message: 'User ID is missing.' }, { status: 400 });
 
 	try {
@@ -109,12 +110,12 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-	const session = await auth();
-	if (!session) {
+	const user = await currentUser();
+	if (!user) {
 		return NextResponse.json({ message: 'You are not logged in.' }, { status: 401 });
 	}
 
-	const userId = session.user?.id;
+	const userId = user?.id;
 	if (!userId) {
 		return NextResponse.json({ message: 'User ID is missing.' }, { status: 400 });
 	}

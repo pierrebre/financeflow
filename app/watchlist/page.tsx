@@ -3,7 +3,7 @@
 import { columns } from '@/components/dataTable/columns';
 import { DataTable } from '@/components/dataTable/data-table';
 import { getCoinsWatchlist } from '@/data/coin';
-import useFavoritesManager from '@/lib/hooks/useFavorites';
+import useFavoritesManager from '@/lib/hooks/use-favorites';
 import { useQuery } from '@tanstack/react-query';
 
 export default function Watchlist() {
