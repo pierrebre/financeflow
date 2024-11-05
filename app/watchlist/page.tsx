@@ -2,7 +2,7 @@
 
 import { columns } from '@/components/dataTable/columns';
 import { DataTable } from '@/components/dataTable/data-table';
-import { fetchCoinsWatchlist } from '@/lib/api';
+import { getCoinsWatchlist } from '@/data/coin';
 import useFavoritesManager from '@/lib/hooks/useFavorites';
 import { useQuery } from '@tanstack/react-query';
 
@@ -17,7 +17,7 @@ export default function Watchlist() {
 		isLoading
 	} = useQuery({
 		queryKey: ['coinsWatchlist', favorites],
-		queryFn: () => fetchCoinsWatchlist(favorites),
+		queryFn: () => getCoinsWatchlist(favorites),
 		enabled: favorites.length > 0
 	});
 

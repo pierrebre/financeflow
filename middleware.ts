@@ -10,7 +10,13 @@ export default auth((req) => {
 	const isLoggedIn = !!req.auth;
 
 	const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-	const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+	const isPublicRoute = publicRoutes.some((route) => {
+		if (route.includes('[id]')) {
+			const dynamicRoute = route.replace('[id]', '');
+			return nextUrl.pathname.startsWith(dynamicRoute);
+		}
+		return route === nextUrl.pathname;
+	});
 	const isAuthRoutes = authRoutes.includes(nextUrl.pathname);
 
 	if (isApiAuthRoute) {
@@ -19,6 +25,7 @@ export default auth((req) => {
 
 	if (isAuthRoutes) {
 		if (isLoggedIn) {
+			console.log('redirecting to dashboard');
 			return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
 		}
 		return;

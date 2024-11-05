@@ -1,7 +1,8 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { fetchCoinData, fetchPriceHistory } from '../../../lib/api';
+import { getCoinData, getPriceHistory } from '@/data/coin';
+
 import { Chart } from '@/components/chart';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useState } from 'react';
@@ -20,7 +21,7 @@ type Props = {
 export default function CoinPage({ params }: Props) {
 	const { data: coin } = useQuery({
 		queryKey: ['coin', params.id],
-		queryFn: () => fetchCoinData(params.id)
+		queryFn: () => getCoinData(params.id)
 	});
 
 	const [interval, setInterval] = useState<ChartInterval>('30');
@@ -33,7 +34,7 @@ export default function CoinPage({ params }: Props) {
 		error: priceHistoryError
 	} = useQuery({
 		queryKey: ['priceHistory', params.id, interval],
-		queryFn: () => fetchPriceHistory(params.id, interval)
+		queryFn: () => getPriceHistory(params.id, interval)
 	});
 
 	if (isPriceHistoryLoading) {

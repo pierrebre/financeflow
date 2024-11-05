@@ -1,7 +1,7 @@
 import type { Coin, DataPrice } from '@/schemas';
 import { format } from 'date-fns';
 
-export const fetchCoinData = async (coinId: string): Promise<Coin> => {
+export const getCoinData = async (coinId: string): Promise<Coin> => {
 	const response = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`);
 	const data = await response.json();
 
@@ -39,7 +39,7 @@ export const fetchCoinData = async (coinId: string): Promise<Coin> => {
 	};
 };
 
-export const fetchPriceHistory = async (coinId: string, interval: string): Promise<DataPrice[]> => {
+export const getPriceHistory = async (coinId: string, interval: string): Promise<DataPrice[]> => {
 	const response = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?days=${interval}&vs_currency=usd`);
 	const data = await response.json();
 
@@ -63,7 +63,7 @@ export const fetchPriceHistory = async (coinId: string, interval: string): Promi
 	}));
 };
 
-export const fetchCoinsWatchlist = async (coinId: string[]): Promise<Coin[]> => {
+export const getCoinsWatchlist = async (coinId: string[]): Promise<Coin[]> => {
 	if (coinId.length === 0) {
 		return [];
 	}
