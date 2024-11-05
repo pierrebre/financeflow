@@ -1,13 +1,12 @@
-import { auth } from '@/auth';
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { currentUser } from '@/lib/utils';
 
 export default async function Dashboard() {
-	const session = await auth();
+	const user = await currentUser();
 
 	return (
 		<div className="flex min-h-screen w-full flex-col">
@@ -25,11 +24,12 @@ export default async function Dashboard() {
 						<CardContent>
 							<form>
 								<Avatar className="mt-2">
-									<AvatarImage src={session?.user?.image ?? ''} alt={session?.user?.name ?? ''} />
+									<AvatarImage src={user?.image ?? ''} alt={user?.name ?? ''} />
 									<AvatarFallback>CN</AvatarFallback>
 								</Avatar>
-								<Input placeholder="Name" disabled className="mt-2" value={session?.user?.name ?? ''} />
-								<Input placeholder="Email" disabled className="mt-2" value={session?.user?.email ?? ''} />
+								<Input placeholder="Name" disabled className="mt-2" value={user?.name ?? ''} />
+								<Input placeholder="Email" disabled className="mt-2" value={user?.email ?? ''} />
+								<Input placeholder="Password" disabled className="mt-2" value={user?.role ?? ''} />
 							</form>
 						</CardContent>
 						<CardFooter className="border-t px-6 py-4">

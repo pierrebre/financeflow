@@ -25,7 +25,6 @@ export default auth((req) => {
 
 	if (isAuthRoutes) {
 		if (isLoggedIn) {
-			console.log('redirecting to dashboard');
 			return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
 		}
 		return;

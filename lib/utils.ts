@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { format, subDays, subWeeks, subMonths, subYears } from 'date-fns';
 import { ChartInterval } from '@/schemas';
+import { auth } from '@/auth';
 
 export const getDateRangeMessage = (unity: ChartInterval): string => {
 	const today = new Date();
@@ -30,3 +31,13 @@ export const getDateRangeMessage = (unity: ChartInterval): string => {
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
+
+export const currentUser = async () => {
+	const session = await auth();
+	return session?.user;
+};
+
+export const currentRole = async () => {
+	const session = await auth();
+	return session?.user?.role;
+};
