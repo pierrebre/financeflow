@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default async function Dashboard() {
 	const session = await auth();
-	if (!session) redirect('/');
 
 	return (
 		<div className="flex min-h-screen w-full flex-col">

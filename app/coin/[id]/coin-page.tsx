@@ -5,7 +5,7 @@ import { fetchCoinData, fetchPriceHistory } from '../../../lib/api';
 import { Chart } from '@/components/chart';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useState } from 'react';
-import { ChartInterval } from '@/lib/types/Chart';
+import { ChartInterval } from '@/schemas';
 import { Star } from 'lucide-react';
 import Converter from '@/components/converter';
 import useFavorites from '@/lib/hooks/useFavorites';

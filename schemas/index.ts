@@ -1,5 +1,11 @@
+
 import { z } from 'zod';
 
+const IntervalModel = z.enum(['1', '7', '30', '365']);
+
+export type ChartInterval = z.infer<typeof IntervalModel>;
+
+// Coin schema
 const CoinModel = z.object({
 	id: z.string(),
 	symbol: z.string(),
@@ -40,7 +46,7 @@ const CoinSchemaTable = CoinModel.omit({
 	market_cap: true,
 	market_cap_rank: true,
 	market_cap_change_percentage_24h: true,
-	circulating_supply: true,
+	circulating_supply: true
 });
 
 const DataPriceModel = z.object({
@@ -53,3 +59,32 @@ export type DataPrice = z.infer<typeof DataPriceModel>;
 export type Coin = z.infer<typeof CoinModel>;
 
 export type CoinTable = z.infer<typeof CoinSchemaTable>;
+
+// Auth schema
+export const LoginSchema = z.object({
+	email: z.string().email({
+		message: 'Email is required'
+	}),
+	password: z.string().min(6, { message: 'Password is required' }),
+	code: z.optional(z.string())
+});
+
+export const ResetPasswordSchema = z.object({
+	email: z.string().email({
+		message: 'Email is required'
+	})
+});
+
+export const NewPasswordSchema = z.object({
+	password: z.string().min(6, {
+		message: 'Minimum 6 characters'
+	})
+});
+
+export const RegisterSchema = z.object({
+	email: z.string().email({
+		message: 'Email is required'
+	}),
+	password: z.string().min(6, { message: 'Minimum 6 characters required' }),
+	name: z.string().min(2, { message: 'Minimum is required' })
+});

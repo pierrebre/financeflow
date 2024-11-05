@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { auth } from '../auth';
 import { SignOut } from './auth/signout';
-import { LoginButton } from './auth/login-button';
 export default async function Navbar() {
 	const session = await auth();
 
@@ -13,12 +12,6 @@ export default async function Navbar() {
 				<Link href="/" className="text-xl font-bold">
 					FinanceFlow
 				</Link>
-			</div>
-			<div className="flex items-center gap-4">
-				{/* 				
-				<Link href="/blog" className="font-medium text-primary">
-					Blog
-				</Link> */}
 			</div>
 			<div className="flex items-center">
 				<DropdownMenu>
@@ -30,7 +23,7 @@ export default async function Navbar() {
 						</Avatar>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuLabel>My Account</DropdownMenuLabel>
+						<DropdownMenuLabel>Settings</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
 							<Link href="/watchlist">Watchlist</Link>

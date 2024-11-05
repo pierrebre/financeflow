@@ -8,7 +8,7 @@ import { useState, useTransition } from 'react';
 
 import { resetPassword } from '@/actions/reset-password';
 
-import { ResetPasswordSchema } from '@/lib/types/Login';
+import { ResetPasswordSchema } from '@/schemas';
 
 import { Form, FormControl, FormLabel, FormItem, FormMessage, FormField } from '@/components/ui/form';
 import { CardWrapper } from './card-wrapper';

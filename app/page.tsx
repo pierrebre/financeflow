@@ -1,4 +1,4 @@
-import { Coin } from '@/lib/types/Coin';
+import { Coin } from '@/schemas';
 import { columns } from '../components/dataTable/columns';
 import { DataTable } from '../components/dataTable/data-table';
 

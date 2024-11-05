@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { CoinTable } from '@/lib/types/Coin';
+import { CoinTable } from '@/schemas';
 import { Button } from '@/components/ui/button';
 
 export const columns: ColumnDef<CoinTable>[] = [

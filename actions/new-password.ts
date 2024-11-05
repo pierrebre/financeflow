@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { getPasswordResetTokenByToken } from '@/data/password-reset-token';
 import { getUserByEmail } from '@/data/user';
-import { NewPasswordSchema } from '@/lib/types/Login';
+import { NewPasswordSchema } from '@/schemas';
 import * as z from 'zod';
 
 export const newPassword = async (values: z.infer<typeof NewPasswordSchema>, token: string | null) => {

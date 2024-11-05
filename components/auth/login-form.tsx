@@ -10,7 +10,7 @@ import Link from 'next/link';
 
 import { login } from '@/actions/login';
 
-import { LoginSchema } from '@/lib/types/Login';
+import { LoginSchema } from '@/schemas';
 
 import { Form, FormControl, FormLabel, FormItem, FormMessage, FormField } from '@/components/ui/form';
 import { CardWrapper } from './card-wrapper';

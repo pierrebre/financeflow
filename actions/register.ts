@@ -4,7 +4,7 @@ import * as z from 'zod';
 import bcrypt from 'bcryptjs';
 
 import prisma from '@/lib/prisma';
-import { RegisterSchema } from '@/lib/types/Register';
+import { RegisterSchema } from '@/schemas';
 import { getUserByEmail } from '@/data/user';
 import { generateVerificationToken } from '@/lib/token';
 import { sendVerificationEmail } from '@/lib/mail';

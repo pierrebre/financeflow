@@ -8,7 +8,7 @@ import { useState, useTransition } from 'react';
 
 import { register } from '@/actions/register';
 
-import { RegisterSchema } from '@/lib/types/Register';
+import { RegisterSchema } from '@/schemas';
 
 import { Form, FormControl, FormLabel, FormItem, FormMessage, FormField } from '@/components/ui/form';
 import { CardWrapper } from './card-wrapper';

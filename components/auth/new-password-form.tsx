@@ -9,7 +9,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { newPassword } from '@/actions/new-password';
 
-import { NewPasswordSchema } from '@/lib/types/Login';
+import { NewPasswordSchema } from '@/schemas';
 
 import { Form, FormControl, FormLabel, FormItem, FormMessage, FormField } from '@/components/ui/form';
 import { CardWrapper } from './card-wrapper';
