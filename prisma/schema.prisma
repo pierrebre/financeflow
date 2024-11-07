@@ -22,7 +22,7 @@ model User {
   role          UserRole        @default(USER)
   accounts      Account[]
   isTwoFactorAuthenticated Boolean @default(false)
-  twoFactorCOnfirmation TwoFactorConfirmation?
+  twoFactorConfirmation TwoFactorConfirmation?
 
   watchlist Watchlist?
 }
