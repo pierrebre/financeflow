@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useTransition } from 'react';
+import { useState, useRef, useTransition, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,6 +18,7 @@ import { FormSucess } from '@/components/form-sucess';
 import { Switch } from '@/components/ui/switch';
 import { uploadImage } from '@/lib/utils';
 import Link from 'next/link';
+import { FaUser } from 'react-icons/fa';
 
 export default function Dashboard() {
 	const { data: session, update, status } = useSession();
@@ -37,6 +38,17 @@ export default function Dashboard() {
 			image: user?.image ?? undefined
 		}
 	});
+
+	useEffect(() => {
+		if (user) {
+			form.reset({
+				name: user.name ?? '',
+				email: user.email ??  undefined,
+				isTwoFactorAuthenticated: user.isTwoFactorAuthenticated,
+				image: user.image
+			});
+		}
+	}, [user, form]);
 
 	const onSubmit = async (values: z.infer<typeof SettingsSchema>) => {
 		if (inputFileRef.current && inputFileRef.current.files && inputFileRef.current.files.length > 0) {
@@ -85,6 +97,9 @@ export default function Dashboard() {
 													<FormControl>
 														<Avatar className="mt-2">
 															<AvatarImage src={user?.image ?? ''} alt={user?.name ?? ''} />
+															<AvatarFallback>
+																<FaUser className="h-5 w-5" />
+															</AvatarFallback>
 														</Avatar>
 													</FormControl>
 													<Input type="file" ref={inputFileRef} accept="image/*" className="ml-4	" onChange={(e) => field.onChange(e.target.files)} />

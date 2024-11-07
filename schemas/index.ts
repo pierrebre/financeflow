@@ -6,7 +6,7 @@ export const SettingsSchema = z.object({
 	name: z.optional(z.string()),
 	isTwoFactorAuthenticated: z.optional(z.boolean()),
 	email: z.optional(z.string().email()),
-	image: z.optional(z.any())
+	image: z.union([z.string().url().optional(), z.any().optional()])
 });
 
 const IntervalModel = z.enum(['1', '7', '30', '365']);
@@ -74,7 +74,9 @@ export const LoginSchema = z.object({
 		message: 'Email is required'
 	}),
 	password: z.string().min(6, { message: 'Password is required' }),
-	code: z.optional(z.string())
+	code: z.optional(z.string().length(5), {
+		message: 'Your one-time password must be 5 characters.'
+	})
 });
 
 export const ResetPasswordSchema = z.object({
