@@ -1,4 +1,6 @@
 'use client';
+
+import { useState, useRef, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,14 +9,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Form, FormControl, FormLabel, FormItem, FormMessage, FormField, FormDescription } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState, useTransition } from 'react';
+import { useSession } from 'next-auth/react';
 import * as z from 'zod';
 import { SettingsSchema } from '@/schemas';
 import { settings } from '@/actions/settings';
 import { FormError } from '@/components/form-error';
 import { FormSucess } from '@/components/form-sucess';
-import { useSession } from 'next-auth/react';
 import { Switch } from '@/components/ui/switch';
+import { uploadImage } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function Dashboard() {
 	const { data: session, update, status } = useSession();
@@ -23,19 +26,24 @@ export default function Dashboard() {
 	const [error, setError] = useState<string | undefined>('');
 	const [success, setSuccess] = useState<string | undefined>('');
 	const [isPending, startTransition] = useTransition();
+	const inputFileRef = useRef<HTMLInputElement>(null);
 
 	const form = useForm<z.infer<typeof SettingsSchema>>({
 		resolver: zodResolver(SettingsSchema),
 		defaultValues: {
 			name: user?.name ?? undefined,
 			email: user?.email ?? undefined,
-			password: undefined,
-			newPassword: undefined,
-			isTwoFactorAuthenticated: user?.isTwoFactorAuthenticated ?? undefined
+			isTwoFactorAuthenticated: user?.isTwoFactorAuthenticated ?? undefined,
+			image: user?.image ?? undefined
 		}
 	});
 
 	const onSubmit = async (values: z.infer<typeof SettingsSchema>) => {
+		if (inputFileRef.current && inputFileRef.current.files && inputFileRef.current.files.length > 0) {
+			const file = inputFileRef.current.files[0];
+			values.image = await uploadImage(file);
+		}
+
 		startTransition(() => {
 			settings(values)
 				.then((data) => {
@@ -69,21 +77,21 @@ export default function Dashboard() {
 							<Form {...form}>
 								<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 									<div className="space-y-4">
-										{/* 										<FormField
+										<FormField
 											control={form.control}
 											name="image"
 											render={({ field }) => (
-												<FormItem>
+												<FormItem className="flex">
 													<FormControl>
 														<Avatar className="mt-2">
 															<AvatarImage src={user?.image ?? ''} alt={user?.name ?? ''} />
-															<AvatarFallback>{user?.name?.[0] ?? 'A'}</AvatarFallback>
 														</Avatar>
 													</FormControl>
+													<Input type="file" ref={inputFileRef} accept="image/*" className="ml-4	" onChange={(e) => field.onChange(e.target.files)} />
 													<FormMessage />
 												</FormItem>
 											)}
-										/> */}
+										/>
 										<FormField
 											control={form.control}
 											name="name"
@@ -112,36 +120,11 @@ export default function Dashboard() {
 												/>
 												<FormField
 													control={form.control}
-													name="password"
-													render={({ field }) => (
-														<FormItem>
-															<FormControl>
-																<Input placeholder="******" type="password" disabled={isPending} className="mt-2" {...field} />
-															</FormControl>
-															<FormMessage />
-														</FormItem>
-													)}
-												/>
-												<FormField
-													control={form.control}
-													name="newPassword"
-													render={({ field }) => (
-														<FormItem>
-															<FormControl>
-																<Input placeholder="******" type="password" disabled={isPending} className="mt-2" {...field} />
-															</FormControl>
-															<FormMessage />
-														</FormItem>
-													)}
-												/>
-
-												<FormField
-													control={form.control}
 													name="isTwoFactorAuthenticated"
 													render={({ field }) => (
 														<FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm ">
 															<div className="space-y-0 5">
-																<FormDescription>Enabled two factor authentication</FormDescription>
+																<FormDescription>Enable two-factor authentication</FormDescription>
 															</div>
 															<FormControl>
 																<Switch disabled={isPending} checked={field.value} onCheckedChange={field.onChange} />
@@ -163,7 +146,6 @@ export default function Dashboard() {
 						</CardContent>
 					</Card>
 				</TabsContent>
-				{/* Portfolio tab omitted for brevity */}
 			</Tabs>
 		</div>
 	);

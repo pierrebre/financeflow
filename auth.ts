@@ -61,6 +61,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				session.user.name = token.name as string;
 				session.user.email = token.email as string;
 				session.user.isOAuth = token.isOAuth as boolean;
+				session.user.image = token.picture;
 			}
 
 			return session;
@@ -79,6 +80,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			token.email = user.email;
 			token.role = user.role;
 			token.isTwoFactorAuthenticated = user.isTwoFactorAuthenticated;
+			token.picture = user.image;
 
 			return token;
 		}
