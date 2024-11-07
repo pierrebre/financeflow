@@ -1,10 +1,14 @@
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { auth } from '../app/(auth)/auth';
+import { auth } from '../auth';
 import { SignOut } from './auth/signout';
+import { FaUser } from 'react-icons/fa';
+import { UserRole } from '@prisma/client';
+import { currentUser } from '@/lib/utils';
+
 export default async function Navbar() {
-	const session = await auth();
+	const user = await currentUser();
 
 	return (
 		<nav className="flex items-center justify-between lg:mb-16 mb-8">
@@ -13,35 +17,37 @@ export default async function Navbar() {
 					FinanceFlow
 				</Link>
 			</div>
-			<div className="flex items-center gap-4">
-				{/* 				
-				<Link href="/blog" className="font-medium text-primary">
-					Blog
-				</Link> */}
-			</div>
 			<div className="flex items-center">
 				<DropdownMenu>
-					<DropdownMenuTrigger name="user_icon" aria-label='User button dropdown'>
-						{' '}
-						<Avatar>
-							<AvatarImage src={session?.user?.image ?? 'https://github.com/shadcn.png'} alt={session?.user?.name ?? ''} />
-							<AvatarFallback>CN</AvatarFallback>
+					<DropdownMenuTrigger name="user_icon" aria-label="User button dropdown">
+						<Avatar className="items-center justify-center bg-muted">
+							<AvatarImage src={user?.image ?? ''} alt={user?.name ?? ''} /> 
+							<AvatarFallback>
+								<FaUser className="h-5 w-5" />
+							</AvatarFallback>
 						</Avatar>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuLabel>My Account</DropdownMenuLabel>
+						<DropdownMenuLabel>Settings</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
 							<Link href="/watchlist">Watchlist</Link>
 						</DropdownMenuItem>
-						<DropdownMenuSeparator />
 						<DropdownMenuItem>
-							<Link href={session !== null ? '/dashboard' : '/api/auth/signin'}>{session !== null ? 'Dashboard' : 'Sign In'}</Link>
+							<Link href="/dashboard">Dashboard</Link>
 						</DropdownMenuItem>
-						{session !== null && (
+						{user !== null && user?.role === UserRole.ADMIN && (
 							<DropdownMenuItem>
-								<SignOut />
+								<Link href="/admin">Admin</Link>
 							</DropdownMenuItem>
+						)}
+						{user !== null && (
+							<>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem>
+									<SignOut />
+								</DropdownMenuItem>
+							</>
 						)}
 					</DropdownMenuContent>
 				</DropdownMenu>

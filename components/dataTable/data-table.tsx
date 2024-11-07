@@ -4,7 +4,7 @@ import { ColumnDef, flexRender, useReactTable, SortingState, getCoreRowModel, ge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
-import useFavoritesManager from '@/lib/hooks/useFavorites';
+import useFavoritesManager from '@/lib/hooks/use-favorites';
 
 interface DataTableProps<TData, TValue> {
 	readonly columns: ColumnDef<TData, TValue>[];

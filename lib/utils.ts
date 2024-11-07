@@ -1,7 +1,8 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { format, subDays, subWeeks, subMonths, subYears } from 'date-fns';
-import { ChartInterval } from '@/lib/types/Chart';
+import { ChartInterval } from '@/schemas';
+import { auth } from '@/auth';
 
 export const getDateRangeMessage = (unity: ChartInterval): string => {
 	const today = new Date();
@@ -31,11 +32,23 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export async function hashString(input: string): Promise<string> {
-	const encoder = new TextEncoder();
-	const data = encoder.encode(input);
-	const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-	const hashArray = Array.from(new Uint8Array(hashBuffer));
-	const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-	return hashHex;
-}
+export const currentUser = async () => {
+	const session = await auth();
+	if (!session) return null;
+
+	return session?.user;
+};
+
+export const currentRole = async () => {
+	const session = await auth();
+	return session?.user?.role;
+};
+
+export const uploadImage = async (file: File) => {
+	const response = await fetch(`/api/avatar/upload?filename=${file.name}`, {
+		method: 'POST',
+		body: file
+	});
+	const blob = await response.json();
+	return blob.url;
+};

@@ -1,13 +1,15 @@
-import { auth } from '../../(auth)/auth';
 import { NextResponse } from 'next/server';
 import prisma from '../../../lib/prisma';
+import { getUserById } from '@/data/user';
+import { currentUser } from '@/lib/utils';
 
 export async function GET(request: Request) {
-	const session = await auth();
-	if (!session) {
+	const user = await currentUser();
+
+	if (!user) {
 		return NextResponse.json({ message: 'You are not logged in.' }, { status: 401 });
 	}
-	const userId = session.user?.id;
+	const userId = user?.id;
 	if (!userId) {
 		return NextResponse.json({ message: 'User ID is missing.' }, { status: 400 });
 	}
@@ -37,28 +39,18 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-	const session = await auth();
-	if (!session) {
+	const user = await currentUser();
+	if (!user) {
 		return NextResponse.json({ message: 'You are not logged in.' }, { status: 401 });
 	}
 
-	const userId = session.user?.id;
-	if (!userId) {
-		return NextResponse.json({ message: 'User ID is missing.' }, { status: 400 });
-	}
+	const userId = user?.id;
+	if (!userId) return NextResponse.json({ message: 'User ID is missing.' }, { status: 400 });
 
 	try {
-		const user = await prisma.user.findUnique({
-			where: { UserId: userId }
-		});
+		const user = await getUserById(userId);
 
-		if (!user) {
-			await prisma.user.create({
-				data: {
-					UserId: userId
-				}
-			});
-		}
+		if (!user) return NextResponse.json({ message: 'User not found.' }, { status: 404 });
 
 		let watchlist = await prisma.watchlist.findUnique({
 			where: { userId: userId }
@@ -68,7 +60,7 @@ export async function POST(request: Request) {
 			watchlist = await prisma.watchlist.create({
 				data: {
 					user: {
-						connect: { UserId: userId }
+						connect: { id: userId }
 					},
 					coins: { create: [] }
 				}
@@ -78,9 +70,7 @@ export async function POST(request: Request) {
 		const body = await request.json();
 		const coinId = body.coinId;
 
-		if (!coinId) {
-			return NextResponse.json({ message: 'No coinId provided.' }, { status: 400 });
-		}
+		if (!coinId) return NextResponse.json({ message: 'No coinId provided.' }, { status: 400 });
 
 		let coin = await prisma.coin.findUnique({
 			where: { CoinId: coinId }
@@ -120,12 +110,12 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-	const session = await auth();
-	if (!session) {
+	const user = await currentUser();
+	if (!user) {
 		return NextResponse.json({ message: 'You are not logged in.' }, { status: 401 });
 	}
 
-	const userId = session.user?.id;
+	const userId = user?.id;
 	if (!userId) {
 		return NextResponse.json({ message: 'User ID is missing.' }, { status: 400 });
 	}
