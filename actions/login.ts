@@ -1,6 +1,7 @@
 'use server';
 
 import * as z from 'zod';
+import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { signIn } from '@/auth';
 import { LoginSchema } from '@/schemas';
@@ -71,6 +72,12 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 				}
 			});
 		} else {
+			const passwordsMatch = await bcrypt.compare(password, existingUser.password);
+
+			if (!passwordsMatch) {
+				throw new Error('Invalid password');
+			}
+
 			const twoFactorToken = await generateTwoFactorToken(existingUser.email);
 			await sendTwoFactorEmail(twoFactorToken.email, twoFactorToken.token);
 

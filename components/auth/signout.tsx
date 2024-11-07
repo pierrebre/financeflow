@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation';
 import { signOut } from '../../auth';
 
 export function SignOut() {

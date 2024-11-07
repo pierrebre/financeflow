@@ -36,7 +36,7 @@ export default async function Navbar() {
 						<DropdownMenuItem>
 							<Link href="/dashboard">Dashboard</Link>
 						</DropdownMenuItem>
-						{user?.role === UserRole.ADMIN && (
+						{user !== null && user?.role === UserRole.ADMIN && (
 							<DropdownMenuItem>
 								<Link href="/admin">Admin</Link>
 							</DropdownMenuItem>

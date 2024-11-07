@@ -7,17 +7,21 @@ declare module 'next-auth' {
 		user: {
 			role?: string;
 			isTwoFactorAuthenticated?: boolean;
-			isOAuth: boolean;
+			isOAuth?: boolean;
 		} & DefaultSession['user'];
 	}
 
 	interface User extends DefaultUser {
 		role?: string;
+		isTwoFactorAuthenticated?: boolean;
+		isOAuth?: boolean;
 	}
 }
 
 declare module 'next-auth/jwt' {
 	interface JWT {
 		role?: string;
+		isTwoFactorAuthenticated?: boolean;
+		isOAuth?: boolean;
 	}
 }
