@@ -18,6 +18,7 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { FormError } from '../form-error';
 import { FormSucess } from '../form-sucess';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 
 export const LoginForm = () => {
 	const searchParams = useSearchParams();
@@ -32,7 +33,7 @@ export const LoginForm = () => {
 		resolver: zodResolver(LoginSchema),
 		defaultValues: {
 			email: '',
-			password: ''
+			password: '',
 		}
 	});
 
@@ -67,10 +68,20 @@ export const LoginForm = () => {
 								control={form.control}
 								name="code"
 								render={({ field }) => (
-									<FormItem>
-										<FormLabel htmlFor={field.name}>2FA Code</FormLabel>
+									<FormItem className="flex flex-col items-center">
+										<FormLabel className="mb-2" htmlFor={field.name}>
+											2FA Code
+										</FormLabel>
 										<FormControl>
-											<Input {...field} type="text" placeholder="2FA Code" disabled={isPending} />
+											<InputOTP maxLength={5} {...field}>
+												<InputOTPGroup>
+													<InputOTPSlot index={0} />
+													<InputOTPSlot index={1} />
+													<InputOTPSlot index={2} />
+													<InputOTPSlot index={3} />
+													<InputOTPSlot index={4} />
+												</InputOTPGroup>
+											</InputOTP>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -111,7 +122,7 @@ export const LoginForm = () => {
 							</>
 						)}
 					</div>
-					<FormError message={error ?? urlError} />
+					<FormError message={error || urlError} />
 					<FormSucess message={success} />
 					<Button type="submit" className="w-full" disabled={isPending}>
 						{showTwoFactor ? 'Confirm' : 'Login'}
