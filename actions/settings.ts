@@ -33,10 +33,18 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
 			throw new Error('Email already exists');
 		}
 
+		await prisma.user.update({
+			where: { id: dbUser.id },
+			data: {
+				email: values.email
+			}
+		});
+
 		const verificationToken = await generateVerificationToken(values.email);
+
 		await sendVerificationEmail(verificationToken.email, verificationToken.token);
 
-		return { success: 'Email sent' };
+		return { success: 'Verification email sent' };
 	}
 
 	await prisma.user.update({
