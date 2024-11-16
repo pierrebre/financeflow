@@ -3,6 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CoinTable } from '@/schemas';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 export const columns: ColumnDef<CoinTable>[] = [
 	{
@@ -22,9 +23,16 @@ export const columns: ColumnDef<CoinTable>[] = [
 	{
 		accessorKey: 'name',
 		header: 'Name',
-		cell: ({ getValue }) => {
-			const value = getValue() as string;
-			return value;
+		cell: ({ row }) => {
+			const name = row.original.name;
+			const imageUrl = row.original.image;
+
+			return (
+				<div className="flex items-center gap-2">
+					<Image src={imageUrl} alt={name} width={24} height={24} />
+					<span>{name}</span>
+				</div>
+			);
 		}
 	},
 	{
