@@ -49,7 +49,6 @@ const CoinModel = z.object({
 
 const CoinSchemaTable = CoinModel.omit({
 	id: true,
-	image: true,
 	current_price: true,
 	market_cap: true,
 	market_cap_rank: true,
