@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { format, subDays, subWeeks, subMonths, subYears } from 'date-fns';
-import { ChartInterval } from '@/schemas';
+import { ChartInterval, Coin } from '@/schemas';
 import { auth } from '@/auth';
 
 export const getDateRangeMessage = (unity: ChartInterval): string => {
@@ -51,4 +51,9 @@ export const uploadImage = async (file: File) => {
 	});
 	const blob = await response.json();
 	return blob.url;
+};
+
+export const fetchCryptos = async ({ pageParam = 1 }: { pageParam?: number }) => {
+	const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=${pageParam}&sparkline=false&price_change_percentage=1h`);
+	return response.json() as Promise<Coin[]>;
 };
