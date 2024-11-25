@@ -53,7 +53,15 @@ export const uploadImage = async (file: File) => {
 	return blob.url;
 };
 
-export const fetchCryptos = async ({ pageParam = 1 }: { pageParam?: number }) => {
-	const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=${pageParam}&sparkline=false&price_change_percentage=1h`);
-	return response.json() as Promise<Coin[]>;
+export const getPeriod = (unity: ChartInterval) => {
+	switch (unity) {
+		case '1':
+			return 'day';
+		case '7':
+			return 'week';
+		case '30':
+			return 'month';
+		default:
+			return 'year';
+	}
 };
