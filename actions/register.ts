@@ -8,6 +8,8 @@ import { RegisterSchema } from '@/schemas';
 import { getUserByEmail } from '@/data/user';
 import { generateVerificationToken } from '@/lib/token';
 import { sendVerificationEmail } from '@/lib/mail';
+import { redirect } from 'next/dist/server/api-utils';
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
 	const valitedFields = RegisterSchema.safeParse(values);

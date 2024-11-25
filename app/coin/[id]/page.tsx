@@ -12,15 +12,22 @@ type Props = {
 export default async function Coin({ params }: Props) {
 	const queryClient = getQueryClient();
 
-	await queryClient.prefetchQuery({
-		queryKey: ['coin', params.id],
-		queryFn: () => getCoinData(params.id)
-	});
+	await Promise.all([
+		queryClient.prefetchQuery({
+			queryKey: ['coin', params.id],
+			queryFn: () => getCoinData(params.id),
+			staleTime: 30 * 1000
+		}),
 
-	await queryClient.prefetchQuery({
-		queryKey: ['priceHistory', params.id, '30'],
-		queryFn: () => getPriceHistory(params.id, '30	')
-	});
+		...['30', '1', '7', '365'].map((period) =>
+			queryClient.prefetchQuery({
+				queryKey: ['priceHistory', params.id, period],
+				queryFn: () => getPriceHistory(params.id, period),
+				staleTime: 60 * 1000,
+				gcTime: 5 * 60 * 1000
+			})
+		)
+	]);
 
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>

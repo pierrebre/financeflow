@@ -1,6 +1,11 @@
 import type { Coin, DataPrice } from '@/schemas';
 import { format } from 'date-fns';
 
+export const fetchCryptos = async ({ pageParam = 1 }: { pageParam?: number }) => {
+	const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=${pageParam}&sparkline=false&price_change_percentage=1h`);
+	return response.json() as Promise<Coin[]>;
+};
+
 export const getCoinData = async (coinId: string): Promise<Coin> => {
 	const response = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`);
 	const data = await response.json();

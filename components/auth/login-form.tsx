@@ -22,7 +22,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 
 export const LoginForm = () => {
 	const searchParams = useSearchParams();
-	const urlError = searchParams.get('error') === 'OAuthAccountNotLinked' ? 'Email already used in different provider' : '';
+	const urlError = searchParams?.get('error') === 'OAuthAccountNotLinked' ? 'Email already used in different provider' : '';
 
 	const [showTwoFactor, setShowTwoFactor] = useState(false);
 	const [error, setError] = useState<string | undefined>('');

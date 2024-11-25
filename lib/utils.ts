@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { format, subDays, subWeeks, subMonths, subYears } from 'date-fns';
-import { ChartInterval } from '@/schemas';
+import { ChartInterval, Coin } from '@/schemas';
 import { auth } from '@/auth';
 
 export const getDateRangeMessage = (unity: ChartInterval): string => {
@@ -51,4 +51,17 @@ export const uploadImage = async (file: File) => {
 	});
 	const blob = await response.json();
 	return blob.url;
+};
+
+export const getPeriod = (unity: ChartInterval) => {
+	switch (unity) {
+		case '1':
+			return 'day';
+		case '7':
+			return 'week';
+		case '30':
+			return 'month';
+		default:
+			return 'year';
+	}
 };

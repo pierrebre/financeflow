@@ -20,7 +20,7 @@ import { FormSucess } from '../form-sucess';
 
 export const NewPasswordForm = () => {
 	const searchParams = useSearchParams();
-	const token = searchParams.get('token');
+	const token = searchParams?.get('token');
 
 	const [error, setError] = useState<string | undefined>('');
 	const [success, setSuccess] = useState<string | undefined>('');
@@ -38,7 +38,7 @@ export const NewPasswordForm = () => {
 		setSuccess('');
 
 		startTransition(() => {
-			newPassword(values, token)
+			newPassword(values, token ?? '')
 				.then((data) => {
 					setSuccess(data?.success);
 				})
