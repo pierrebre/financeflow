@@ -7,10 +7,8 @@ import useFavoritesManager from '@/lib/hooks/use-favorites';
 import { useQuery } from '@tanstack/react-query';
 
 export default function Watchlist() {
-	// Utilisation du hook personnalisé pour gérer les favoris
 	const { favorites } = useFavoritesManager();
 
-	// Utilisation de React Query pour récupérer les coins de la watchlist
 	const {
 		data: coinsWatchlist,
 		error,
