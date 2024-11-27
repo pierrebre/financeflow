@@ -7,10 +7,9 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"vercel-build": "prisma generate && prisma migrate deploy && next build",
+		"vercel-build": "prisma generate && prisma migrate deploy && next build && next-sitemap",
 		"type-check": "tsc",
-		"cypress:open": "cypress open",
-		"postbuild": "next-sitemap"
+		"cypress:open": "cypress open"
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.7.2",
