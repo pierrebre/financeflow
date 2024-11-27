@@ -11,7 +11,9 @@ export default function Home() {
 		queryKey: ['cryptos'],
 		queryFn: ({ pageParam = 1 }) => fetchCryptos({ pageParam: pageParam as number }),
 		getNextPageParam: (lastPage, pages) => (pages.length < 5 && lastPage.length === 20 ? pages.length + 1 : undefined),
-		initialPageParam: 1
+		initialPageParam: 1,
+		retry: 3,
+		retryDelay: 1000
 	});
 
 	const cryptoData = data?.pages.flatMap((page) => page) || [];

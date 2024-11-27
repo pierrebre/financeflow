@@ -29,7 +29,7 @@ export const columns: ColumnDef<CoinTable>[] = [
 
 			return (
 				<div className="flex items-center gap-2">
-					<Image src={imageUrl} alt={name} width={24} height={24} />
+					<Image src={imageUrl} alt={`${name} logo`} width={24} height={24} />
 					<span>{name}</span>
 				</div>
 			);
