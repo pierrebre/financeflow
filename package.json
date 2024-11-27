@@ -9,7 +9,8 @@
 		"lint": "next lint",
 		"vercel-build": "prisma generate && prisma migrate deploy && next build",
 		"type-check": "tsc",
-		"cypress:open": "cypress open"
+		"cypress:open": "cypress open",
+		"postbuild": "next-sitemap"
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.7.2",
@@ -42,6 +43,7 @@
 		"lucide-react": "^0.408.0",
 		"next": "14.2.5",
 		"next-auth": "5.0.0-beta.19",
+		"next-sitemap": "^4.2.3",
 		"prettier": "^3.3.3",
 		"prisma": "^5.17.0",
 		"react": "^18.3.1",
