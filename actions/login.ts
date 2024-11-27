@@ -25,8 +25,8 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 	const existingUser = await getUserByEmail(email);
 
 	if (!existingUser?.password || !existingUser?.email) {
-        throw new Error('Email does not exist');
-    }
+		throw new Error('Invalid credentials');
+	}
 
 	if (!existingUser.emailVerified) {
 		const verificationToken = await generateVerificationToken(existingUser.email);
