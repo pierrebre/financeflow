@@ -13,7 +13,9 @@ export default function Home() {
 		getNextPageParam: (lastPage, pages) => (pages.length < 5 && lastPage.length === 20 ? pages.length + 1 : undefined),
 		initialPageParam: 1,
 		retry: 3,
-		retryDelay: 1000
+		retryDelay: 1000,
+		staleTime: 30 * 1000,
+		gcTime: 5 * 60 * 1000
 	});
 
 	const cryptoData = data?.pages.flatMap((page) => page) || [];

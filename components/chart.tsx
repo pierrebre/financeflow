@@ -4,7 +4,7 @@ import { TrendingDown, TrendingUp } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, YAxis, ReferenceLine, Tooltip } from 'recharts';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartInterval, DataPrice } from '@/schemas';
-import { getDateRangeMessage, getPeriod } from '@/lib/utils';
+import { getPeriod } from '@/lib/utils';
 
 type Props = {
 	readonly priceData: DataPrice[];
@@ -16,7 +16,6 @@ export function Chart({ priceData, unity, priceChangePercentage }: Props) {
 	const period = getPeriod(unity);
 	const currentPrice = priceData[priceData.length - 1]?.price;
 
-	// Calculer le min et max pour le domain
 	const prices = priceData.map((d) => d.price);
 	const minPrice = Math.min(...prices);
 	const maxPrice = Math.max(...prices);
@@ -25,7 +24,7 @@ export function Chart({ priceData, unity, priceChangePercentage }: Props) {
 	const domainMax = maxPrice + priceDiff * 0.1;
 
 	return (
-		<Card className="w-full h-[500px]">
+		<Card className="w-full  mb-8">
 			<CardHeader>
 				<CardTitle>Price Chart</CardTitle>
 				<CardDescription>Showing the price for the last {period}</CardDescription>
@@ -61,7 +60,7 @@ export function Chart({ priceData, unity, priceChangePercentage }: Props) {
 				</ResponsiveContainer>
 			</CardContent>
 			<CardFooter className="border-t">
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-2 mt-6">
 					{priceChangePercentage !== null && (
 						<>
 							<span className="flex items-center gap-1">
