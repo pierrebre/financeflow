@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { getCoinData, getPriceHistory } from '@/data/coin';
-import { ChartInterval, Coin } from '@/schemas';
+import { ChartInterval, Coin, DataPrice } from '@/schemas';
 
 import { Chart } from '@/components/chart';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -32,7 +31,7 @@ const CoinStats = ({ Coin }: { readonly Coin: Coin }) => (
 			</span>
 			{Coin?.max_supply != null && Coin?.max_supply > 0 ? (
 				<div className="flex items-end">
-					<Progress className="w-[60%] my-2 h-3 mr-4" value={((Coin?.circulating_supply ?? 0) / (Coin?.max_supply ?? 0)) * 100} />
+					<Progress className="w-[60%] my-2 h-2 mr-4" value={((Coin?.circulating_supply ?? 0) / (Coin?.max_supply ?? 0)) * 100} />
 					{(((Coin?.circulating_supply ?? 0) / (Coin?.max_supply ?? 0)) * 100).toFixed(2)}%
 				</div>
 			) : null}
@@ -47,21 +46,12 @@ export default function CoinPage({ params }: CoinPageProps) {
 	const [interval, setInterval] = useState<ChartInterval>('30');
 	const { favorites, toggleFavorite } = useFavorites();
 
-	const { data: coin, isLoading: isCoinLoading } = useQuery({
-		queryKey: ['coin', params.id],
-		queryFn: () => getCoinData(params.id)
-	});
+	const queryClient = useQueryClient();
 
-	const [priceChangePercentage, setPriceChangePercentage] = useState<number | null>(coin?.price_change_percentage_24h ?? null);
+	const coin: Coin | undefined = queryClient.getQueryData(['coin', params.id]);
+	const priceHistory: DataPrice[] | undefined = queryClient.getQueryData(['priceHistory', params.id, interval]);
 
-	const {
-		data: priceHistory,
-		isLoading: isPriceHistoryLoading,
-		error: priceHistoryError
-	} = useQuery({
-		queryKey: ['priceHistory', params.id, interval],
-		queryFn: () => getPriceHistory(params.id, interval)
-	});
+	const [priceChangePercentage, setPriceChangePercentage] = useState<number | null>(coin?.price_change_percentage_30d ?? null);
 
 	const handleIntervalSelect = (value: ChartInterval) => {
 		const percentageChangeMap = {
@@ -70,17 +60,14 @@ export default function CoinPage({ params }: CoinPageProps) {
 			'30': coin?.price_change_percentage_30d,
 			'365': coin?.price_change_percentage_1y
 		};
+
+		if (percentageChangeMap[value] === undefined) {
+			return;
+		}
+
 		setPriceChangePercentage(percentageChangeMap[value] ?? null);
 		setInterval(value);
 	};
-
-	if (isPriceHistoryLoading || isCoinLoading) {
-		return <div>Chargement...</div>;
-	}
-
-	if (priceHistoryError) {
-		return <div>Erreur de chargement des données</div>;
-	}
 
 	return (
 		<main className="flex lg:flex-row flex-col">
@@ -98,7 +85,7 @@ export default function CoinPage({ params }: CoinPageProps) {
 				{coin && <Converter Coin={coin} />}
 			</section>
 			<section className="lg:w-3/4 w-full lg:mt-0 mt-10">
-				<ToggleGroup className="lg:justify-end mb-4" type="single" defaultValue="30" onValueChange={handleIntervalSelect}>
+				<ToggleGroup className="lg:justify-end mb-4" type="single" defaultValue="30" value={interval} onValueChange={handleIntervalSelect}>
 					<ToggleGroupItem value="1">1D</ToggleGroupItem>
 					<ToggleGroupItem value="7">7D</ToggleGroupItem>
 					<ToggleGroupItem value="30">30D</ToggleGroupItem>

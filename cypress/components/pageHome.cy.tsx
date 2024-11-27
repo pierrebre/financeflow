@@ -1,9 +1,9 @@
 import React from 'react'
-import NotFound from './not-found'
+import Home from '../../app/page'
 
-describe('<NotFound />', () => {
+describe('<Home />', () => {
   it('renders', () => {
     // see: https://on.cypress.io/mounting-react
-    cy.mount(<NotFound />)
+    cy.mount(<Home />)
   })
 })
