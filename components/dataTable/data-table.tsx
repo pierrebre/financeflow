@@ -1,20 +1,18 @@
 'use client';
+
 import { useMemo, useState } from 'react';
-import { ColumnDef, flexRender, useReactTable, SortingState, getCoreRowModel, getSortedRowModel } from '@tanstack/react-table';
+import { flexRender, useReactTable, SortingState, getCoreRowModel, getSortedRowModel } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import Link from 'next/link';
-import { Star, Loader2 } from 'lucide-react';
 import useFavoritesManager from '@/lib/hooks/use-favorites';
+import { DataTableProps } from '@/schemas';
+import { ErrorState } from './error-state';
+import { CustomTableCell } from './table-cell';
+import { LoadingSkeleton } from './loading-skeleton';
 
-interface DataTableProps<TData, TValue> {
-	readonly columns: ColumnDef<TData, TValue>[];
-	readonly data: TData[];
-	readonly isLoading?: boolean;
-}
-
-export function DataTable<TData, TValue>({ columns, data, isLoading = false }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, isLoading = false, isError = false }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const { favorites, toggleFavorite } = useFavoritesManager();
+	const memoizedColumns = useMemo(() => columns, [columns]);
 
 	const table = useReactTable({
 		data,
@@ -25,10 +23,20 @@ export function DataTable<TData, TValue>({ columns, data, isLoading = false }: D
 		state: { sorting }
 	});
 
-	const memoizedColumns = useMemo(() => columns, [columns]);
+	if (isLoading) {
+		return (
+			<div className="rounded-md border">
+				<LoadingSkeleton columnCount={memoizedColumns.length} />
+			</div>
+		);
+	}
+
+	if (isError && data.length === 0) {
+		return <ErrorState />;
+	}
 
 	return (
-		<div className="rounded-md border">
+		<div className="rounded-md border mb-8">
 			<Table>
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (
@@ -41,39 +49,19 @@ export function DataTable<TData, TValue>({ columns, data, isLoading = false }: D
 				</TableHeader>
 				<TableBody>
 					{table.getRowModel()?.rows?.length ? (
-						<>
-							{table.getRowModel().rows.map((row) => (
-								<TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
-									{row.getVisibleCells().map((cell: any) => (
-										<TableCell key={cell.id}>
-											{cell.column.id === 'favorite' ? (
-												<button onClick={() => toggleFavorite((row.original as any).id)} aria-label="Favorite">
-													<Star className={`text-[#a6b1c2] h-5 w-5 ${favorites.includes((row.original as any).id as string) ? 'fill-[#f6b87e] text-[#f6b87e]' : ''}`} />
-												</button>
-											) : (
-												<Link href={`/coin/${(row.original as any).id as string}`} key={row.id}>
-													{flexRender(cell.column.columnDef.cell, cell.getContext())}
-												</Link>
-											)}
-										</TableCell>
-									))}
-								</TableRow>
-							))}
-						</>
+						table.getRowModel().rows.map((row) => (
+							<TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
+								{row.getVisibleCells().map((cell) => (
+									<TableCell key={cell.id}>
+										<CustomTableCell cell={cell} row={row} toggleFavorite={toggleFavorite} favorites={favorites} />
+									</TableCell>
+								))}
+							</TableRow>
+						))
 					) : (
 						<TableRow>
 							<TableCell colSpan={memoizedColumns.length} className="h-24 text-center">
 								No results.
-							</TableCell>
-						</TableRow>
-					)}
-
-					{isLoading && (
-						<TableRow>
-							<TableCell colSpan={memoizedColumns.length} className="text-center">
-								<div className="flex justify-center items-center p-4">
-									<Loader2 className="h-6 w-6 animate-spin" />
-								</div>
 							</TableCell>
 						</TableRow>
 					)}
