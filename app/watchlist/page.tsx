@@ -11,22 +11,19 @@ export default function Watchlist() {
 
 	const {
 		data: coinsWatchlist,
-		error,
-		isLoading
+		isError,
+		isLoading,
 	} = useQuery({
 		queryKey: ['coinsWatchlist', favorites],
 		queryFn: () => getCoinsWatchlist(favorites),
 		enabled: favorites.length > 0
 	});
 
-	if (isLoading) return <div>Loading...</div>;
-	if (error) return <div>Error fetching watchlist coins.</div>;
-
 	return (
 		<main className="min-h-screen">
 			<div>
 				<h1 className="scroll-m-20 text-xl font-extrabold tracking-tight lg:text-2xl text-center pb-4">Watchlist</h1>
-				<DataTable columns={columns} data={coinsWatchlist || []} />
+				<DataTable columns={columns} data={coinsWatchlist || []} isLoading={isLoading} isError={isError} />
 			</div>
 		</main>
 	);

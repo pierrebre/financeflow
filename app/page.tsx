@@ -1,13 +1,14 @@
 'use client';
+
 import { fetchCryptos } from '@/data/coin';
 import { columns } from '../components/dataTable/columns';
 import { DataTable } from '../components/dataTable/data-table';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
 import { Coin } from '@/schemas';
+import { useIntersectionObserver } from '@/lib/hooks/use-intersection-observer';
 
 export default function Home() {
-	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError } = useInfiniteQuery<Coin[], Error>({
+	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError, isLoading } = useInfiniteQuery<Coin[], Error>({
 		queryKey: ['cryptos'],
 		queryFn: ({ pageParam = 1 }) => fetchCryptos({ pageParam: pageParam as number }),
 		getNextPageParam: (lastPage, pages) => (pages.length < 5 && lastPage.length === 20 ? pages.length + 1 : undefined),
@@ -20,29 +21,20 @@ export default function Home() {
 
 	const cryptoData = data?.pages.flatMap((page) => page) || [];
 
-	useEffect(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage && !isError) {
-					fetchNextPage();
-				}
-			},
-			{ threshold: 0.1 }
-		);
-
-		const sentinel = document.getElementById('scroll-sentinel');
-		if (sentinel) {
-			observer.observe(sentinel);
-		}
-
-		return () => observer.disconnect();
-	}, [hasNextPage, isFetchingNextPage, fetchNextPage, isError]);
+	const { observerRef } = useIntersectionObserver({
+		onIntersect: () => {
+			if (hasNextPage && !isFetchingNextPage && !isError) {
+				fetchNextPage();
+			}
+		},
+		threshold: 0.1
+	});
 
 	return (
 		<main className="flex flex-col items-center">
 			<div className="w-full">
-				<DataTable columns={columns} data={cryptoData} isLoading={isFetchingNextPage} />
-				<div id="scroll-sentinel" className="h-[10px]" />
+				<DataTable columns={columns} data={cryptoData} isLoading={isLoading} isError={isError} />
+				<div ref={observerRef} className="h-[10px]" />
 			</div>
 		</main>
 	);

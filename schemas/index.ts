@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ColumnDef } from '@tanstack/react-table';
 
 // Settings schema
 
@@ -97,3 +98,11 @@ export const RegisterSchema = z.object({
 	password: z.string().min(6, { message: 'Minimum 6 characters required' }),
 	name: z.string().min(2, { message: 'Minimum is required' })
 });
+
+// DataTable schema
+export interface DataTableProps<TData, TValue> {
+	readonly columns: ColumnDef<TData, TValue>[];
+	readonly data: TData[];
+	readonly isLoading?: boolean;
+	readonly isError?: boolean;
+}
