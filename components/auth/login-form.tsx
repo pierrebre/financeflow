@@ -33,7 +33,7 @@ export const LoginForm = () => {
 		resolver: zodResolver(LoginSchema),
 		defaultValues: {
 			email: '',
-			password: '',
+			password: ''
 		}
 	});
 
@@ -52,8 +52,13 @@ export const LoginForm = () => {
 					setSuccess(data?.success);
 				})
 				.catch((error) => {
-					form.reset();
+					if (error.message === 'Invalid code' || error.message === 'Code expired') {
+						setError(error.message);
+						form.setError('code', { message: error.message });
+						return;
+					}
 					setError(error.message);
+					form.reset();
 				});
 		});
 	};
