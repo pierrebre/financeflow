@@ -26,11 +26,11 @@ model User {
   password                 String?
   role                     UserRole               @default(USER)
   accounts                 Account[]
+  portfolios               Portfolio[]
   isTwoFactorAuthenticated Boolean                @default(false)
   twoFactorConfirmation    TwoFactorConfirmation?
 
   watchlist Watchlist?
-  Portfolio Portfolio?
 }
 
 model Account {
@@ -115,7 +115,7 @@ model WatchlistCoin {
 
 model Portfolio {
   id           String        @id @default(uuid())
-  userId       String        @unique
+  userId       String
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   name         String
   description  String?
@@ -127,9 +127,9 @@ model Portfolio {
 
 model Transaction {
   id             String          @id @default(uuid())
-  portfolioId    String          @unique
+  portfolioId    String
   portfolio      Portfolio       @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
-  coinId         String          @unique
+  coinId         String
   coin           Coin            @relation(fields: [coinId], references: [CoinId], onDelete: Cascade)
   quantityCrypto Float
   amountUsd      Float

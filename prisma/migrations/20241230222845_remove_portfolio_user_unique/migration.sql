@@ -31,15 +31,6 @@ CREATE TABLE "Transaction" (
     CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "Portfolio_userId_key" ON "Portfolio"("userId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Transaction_portfolioId_key" ON "Transaction"("portfolioId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Transaction_coinId_key" ON "Transaction"("coinId");
-
 -- AddForeignKey
 ALTER TABLE "Portfolio" ADD CONSTRAINT "Portfolio_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
