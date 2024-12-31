@@ -1,12 +1,19 @@
-import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { getUserPortfoliosWithUserId } from '@/data/portfolio';
+import PortfolioList from './portfolio-list';
+import { auth } from '@/auth';
 
-export default function Portfolio() {
-	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>Portfolio</CardTitle>
-				<CardDescription>My portfolio</CardDescription>
-			</CardHeader>
-		</Card>
-	);
+export default async function PortfolioPage() {
+	const session = await auth();
+
+	if (!session?.user?.id) {
+		return <div>Please login to view your portfolios</div>;
+	}
+
+	const portfolios = await getUserPortfoliosWithUserId(session.user.id);
+
+	if (!portfolios) {
+		return <div>No portfolios found</div>;
+	}
+
+	return <PortfolioList initialPortfolios={portfolios} userId={session.user.id} />;
 }
