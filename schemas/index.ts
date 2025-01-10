@@ -105,4 +105,16 @@ export interface DataTableProps<TData, TValue> {
 	readonly data: TData[];
 	readonly isLoading?: boolean;
 	readonly isError?: boolean;
+	readonly isForPortfolio?: boolean;
 }
+
+
+// Portfolio schema
+export interface Portfolio {
+	id: string;
+	name: string;
+	description: string | null;
+	userId: string;
+	createdAt: Date;
+	updatedAt: Date;
+  }
