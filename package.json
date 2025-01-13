@@ -52,6 +52,7 @@
 		"react-spinners": "^0.14.1",
 		"recharts": "^2.12.7",
 		"resend": "4.0.1-alpha.0",
+		"rss-parser": "^3.13.0",
 		"tailwind-merge": "^2.4.0",
 		"tailwindcss-animate": "^1.0.7",
 		"uuid": "^11.0.2",
