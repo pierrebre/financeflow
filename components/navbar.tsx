@@ -17,22 +17,28 @@ export default async function Navbar() {
 					FinanceFlow
 				</Link>
 			</div>
+
 			<div className="flex items-center">
+				<div className="lg:mx-4">
+					<Link href="/watchlist" className="mx-4">
+						Watchlist
+					</Link>
+					<Link href="/blog" className="mx-4">
+						Blog
+					</Link>
+				</div>
 				<DropdownMenu>
 					<DropdownMenuTrigger name="user_icon" aria-label="User button dropdown">
 						<Avatar className="items-center justify-center bg-muted">
-							<AvatarImage src={user?.image ?? ''} alt={user?.name ?? ''} /> 
+							<AvatarImage src={user?.image ?? ''} alt={user?.name ?? ''} />
 							<AvatarFallback>
 								<FaUser className="h-5 w-5" />
 							</AvatarFallback>
 						</Avatar>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuLabel>Settings</DropdownMenuLabel>
+						<DropdownMenuLabel>Account</DropdownMenuLabel>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>
-							<Link href="/watchlist">Watchlist</Link>
-						</DropdownMenuItem>
 						<DropdownMenuItem>
 							<Link href="/dashboard">Dashboard</Link>
 						</DropdownMenuItem>
