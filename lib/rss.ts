@@ -1,13 +1,6 @@
 import Parser from 'rss-parser';
 
-interface FetchOptions {
-	timeout?: number;
-	maxItems?: number;
-}
-
-export async function fetchRSSFeed(url: string, options: FetchOptions = {}) {
-	const { timeout = 5000, maxItems = Infinity } = options;
-
+export async function fetchRSSFeed(url: string, maxItems: number = Infinity, timeout: number = 5000) {
 	try {
 		const parser = new Parser({
 			timeout,
@@ -19,7 +12,7 @@ export async function fetchRSSFeed(url: string, options: FetchOptions = {}) {
 
 		const feed = await parser.parseURL(url);
 
-		const formattedFeed = {
+		return {
 			title: feed.title,
 			description: feed.description,
 			link: feed.link,
@@ -36,8 +29,6 @@ export async function fetchRSSFeed(url: string, options: FetchOptions = {}) {
 				guid: item.guid || null
 			}))
 		};
-
-		return formattedFeed;
 	} catch (error) {
 		if (error instanceof Error) {
 			if (error.name === 'TimeoutError') {
