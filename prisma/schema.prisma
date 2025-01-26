@@ -93,7 +93,7 @@ model TwoFactorConfirmation {
 model Coin {
   CoinId       String          @id @default(cuid())
   watchlists   WatchlistCoin[]
-  transactions Transaction[]
+  portfolios   PortfolioCoin[]
 }
 
 model Watchlist {
@@ -114,30 +114,42 @@ model WatchlistCoin {
 }
 
 model Portfolio {
-  id           String        @id @default(uuid())
+  id           String          @id @default(uuid())
   userId       String
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   name         String
   description  String?
-  transactions Transaction[]
+  coins        PortfolioCoin[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model PortfolioCoin {
+  id          String        @id @default(uuid())
+  portfolioId String
+  coinId      String
+  portfolio   Portfolio     @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  coin        Coin          @relation(fields: [coinId], references: [CoinId], onDelete: Cascade)
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([portfolioId, coinId])
+}
+
 model Transaction {
-  id             String          @id @default(uuid())
-  portfolioId    String
-  portfolio      Portfolio       @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
-  coinId         String
-  coin           Coin            @relation(fields: [coinId], references: [CoinId], onDelete: Cascade)
-  quantityCrypto Float
-  amountUsd      Float
-  type           TransactionType
-  pricePerCoin   Float
-  fees           Float?
-  note           String?
-  date           DateTime        @default(now())
+  id              String        @id @default(uuid())
+  portfolioCoinId String
+  portfolioCoin   PortfolioCoin @relation(fields: [portfolioCoinId], references: [id], onDelete: Cascade)
+  quantityCrypto  Float
+  amountUsd       Float
+  type            TransactionType
+  pricePerCoin    Float
+  fees            Float?
+  note            String?
+  date            DateTime      @default(now())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

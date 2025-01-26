@@ -8,8 +8,9 @@ import { DataTableProps } from '@/schemas';
 import { ErrorState } from './error-state';
 import { CustomTableCell } from './table-cell';
 import { LoadingSkeleton } from './loading-skeleton';
+import { cn } from '@/lib/utils';
 
-export function DataTable<TData, TValue>({ columns, data, isLoading = false, isError = false }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, isLoading = false, isError = false, isForPortfolio = false }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const { favorites, toggleFavorite } = useFavoritesManager();
 	const memoizedColumns = useMemo(() => columns, [columns]);
@@ -36,7 +37,7 @@ export function DataTable<TData, TValue>({ columns, data, isLoading = false, isE
 	}
 
 	return (
-		<div className="rounded-md border mb-8">
+		<div className={cn(isForPortfolio ? 'border-t' : 'rounded-md border mb-8')}>
 			<Table>
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (

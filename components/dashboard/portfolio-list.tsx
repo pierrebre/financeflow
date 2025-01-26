@@ -6,15 +6,9 @@ import { useOptimistic, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '../ui/button';
 import PortfolioSelect from './portfolio-select';
-
-interface Portfolio {
-	id: string;
-	name: string;
-	description: string | null;
-	userId: string;
-	createdAt: Date;
-	updatedAt: Date;
-}
+import { Portfolio } from '@/schemas';
+import { DataTable } from '../dataTable/data-table';
+import { columns } from '../dataTable/columns';
 
 interface PortfolioListProps {
 	initialPortfolios: Portfolio[];
@@ -36,6 +30,8 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 		setSelectedPortfolio(portfolio);
 	}
 
+	const data: any = [];
+
 	return (
 		<Card>
 			<CardHeader>
@@ -49,12 +45,12 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 				<div className="flex space-x-4">
 					<PortfolioSelect optimisticPortfolios={optimisticPortfolios} selectedPortfolio={selectedPortfolio} onSelect={handlePortfolioSelection} />
 					<Button variant="outline" className="ml-auto" disabled={!selectedPortfolio}>
-						<Plus />
+						<Plus size={16} /> Add Asset
 					</Button>
 				</div>
 				{error && <p className="text-red-500">{error}</p>}
-				{selectedPortfolio ? <p>Selected Portfolio: {selectedPortfolio.name}</p> : <p>No portfolio selected</p>}
 			</CardContent>
+			<div className="my-8 text-center">{data.length !== 0 ? <DataTable columns={columns} data={data} isForPortfolio /> : <p>No assets</p>}</div>
 		</Card>
 	);
 }
