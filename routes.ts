@@ -2,7 +2,7 @@
  * An aray of route that are accessible to the public
  * Authentificatio not required
  */
-export const publicRoutes = ['/', '/coin/[id]', '/watchlist', '/auth/new-verification', '/robots.txt', '/sitemap.xml'];
+export const publicRoutes = ['/', '/coin/[id]', '/watchlist', '/auth/new-verification', '/robots.txt', '/sitemap.xml', '/blog'];
 
 /**
  * An array of routes used for authentification

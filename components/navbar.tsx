@@ -7,7 +7,8 @@ import { FaUser } from 'react-icons/fa';
 import { UserRole } from '@prisma/client';
 import { currentUser } from '@/lib/utils';
 import NavLink from './nav-link';
-import AnimatedButton from './animated-button';
+import AnimatedButton from './mobile-menu';
+import MobileMenu from './mobile-menu';
 
 export default async function Navbar() {
 	const user = await currentUser();
@@ -61,23 +62,7 @@ export default async function Navbar() {
 					</DropdownMenuContent>
 				</DropdownMenu>
 
-				<DropdownMenu>
-					<DropdownMenuTrigger className="lg:hidden ml-4 focus:outline-none" aria-label="Toggle menu">
-						<AnimatedButton className="hover:text-primary transition-colors" />
-					</DropdownMenuTrigger>
-					<DropdownMenuContent className="w-48">
-						<DropdownMenuItem className="cursor-pointer">
-							<Link href="/watchlist" className="w-full">
-								Watchlist
-							</Link>
-						</DropdownMenuItem>
-						<DropdownMenuItem className="cursor-pointer">
-							<Link href="/blog" className="w-full">
-								Blog
-							</Link>
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+				<MobileMenu />
 			</div>
 		</nav>
 	);
