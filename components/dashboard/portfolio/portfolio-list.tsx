@@ -3,12 +3,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PortfolioDialog } from './portfolio-dialog';
 import { useOptimistic, useState } from 'react';
-import { Plus } from 'lucide-react';
-import { Button } from '../ui/button';
 import PortfolioSelect from './portfolio-select';
 import { Portfolio } from '@/schemas';
-import { DataTable } from '../dataTable/data-table';
-import { columns } from '../dataTable/columns';
+import { DataTable } from '../../dataTable/data-table';
+import { columns } from '../../dataTable/columns';
+import AssetDialog from './asset/asset-dialog';
 
 interface PortfolioListProps {
 	initialPortfolios: Portfolio[];
@@ -30,6 +29,7 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 		setSelectedPortfolio(portfolio);
 	}
 
+	console.log(selectedPortfolio);
 	const data: any = [];
 
 	return (
@@ -44,9 +44,7 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 				</div>
 				<div className="flex space-x-4">
 					<PortfolioSelect optimisticPortfolios={optimisticPortfolios} selectedPortfolio={selectedPortfolio} onSelect={handlePortfolioSelection} />
-					<Button variant="outline" className="ml-auto" disabled={!selectedPortfolio}>
-						<Plus size={16} /> Add Asset
-					</Button>
+					<AssetDialog portfolioId={selectedPortfolio?.id} />
 				</div>
 				{error && <p className="text-red-500">{error}</p>}
 			</CardContent>
