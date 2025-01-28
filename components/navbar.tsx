@@ -1,4 +1,3 @@
-// Navbar.tsx
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -7,7 +6,6 @@ import { FaUser } from 'react-icons/fa';
 import { UserRole } from '@prisma/client';
 import { currentUser } from '@/lib/utils';
 import NavLink from './nav-link';
-import AnimatedButton from './mobile-menu';
 import MobileMenu from './mobile-menu';
 
 export default async function Navbar() {
