@@ -24,3 +24,24 @@ export async function createPortfolio(name: string, description: string, userId:
 		throw error;
 	}
 }
+
+export const addCoinToPortfolio = async (portfolioId: string, coinId: string) => {
+	const result = await prisma.portfolioCoin.create({
+		data: {
+			portfolioId,
+			coinId
+		}
+	});
+
+	return result;
+};
+
+export async function getCoinsByPortfolio(portfolioId: string): Promise<any> {
+	const coins = await prisma.portfolioCoin.findMany({
+		where: {
+			portfolioId
+		}
+	});
+
+	return coins;
+}
