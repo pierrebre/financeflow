@@ -1,3 +1,4 @@
+import CoinSearch from '@/components/coin-search';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
@@ -17,7 +18,7 @@ export default function AssetDialog({ portfolioId }: AssetDialogProps) {
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Add Asset</DialogTitle>
-                    
+					<CoinSearch portfolioId={portfolioId} />
 				</DialogHeader>
 			</DialogContent>
 		</Dialog>

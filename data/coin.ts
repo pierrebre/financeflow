@@ -68,12 +68,12 @@ export const getPriceHistory = async (coinId: string, interval: string): Promise
 	}));
 };
 
-export const getCoinsWatchlist = async (coinId: string[]): Promise<Coin[]> => {
-	if (coinId.length === 0) {
+export const getCoinsWatchlist = async (coinsId: string[]): Promise<Coin[]> => {
+	if (coinsId.length === 0) {
 		return [];
 	}
 
-	const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinId}&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=1h`);
+	const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinsId}&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=1h`);
 	const data = await response.json();
 
 	return data.map((coin: Coin) => ({
