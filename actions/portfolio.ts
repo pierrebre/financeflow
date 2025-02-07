@@ -26,14 +26,22 @@ export async function createPortfolio(name: string, description: string, userId:
 }
 
 export const addCoinToPortfolio = async (portfolioId: string, coinId: string) => {
-	const result = await prisma.portfolioCoin.create({
+	let coin = await prisma.coin.findUnique({
+		where: { CoinId: coinId }
+	});
+
+	if (!coin) {
+		await prisma.coin.create({
+			data: { CoinId: coinId }
+		});
+	}
+
+	return await prisma.portfolioCoin.create({
 		data: {
 			portfolioId,
 			coinId
 		}
 	});
-
-	return result;
 };
 
 export async function getCoinsByPortfolio(portfolioId: string): Promise<any> {

@@ -72,7 +72,7 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 				</div>
 				{error && <p className="text-red-500">{error}</p>}
 			</CardContent>
-			<div className="my-8 text-center">{coinsPortfolio ? <DataTable columns={columns} data={coinsPortfolio} isForPortfolio /> : <p>No coins</p>}</div>
+			<div className="mt-8 text-center">{coinsPortfolio?.length ? <DataTable columns={columns} data={coinsPortfolio} isForPortfolio /> : <p className='mb-8'>No coins</p>}</div>
 		</Card>
 	);
 }
