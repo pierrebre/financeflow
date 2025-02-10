@@ -6,7 +6,7 @@ import { useEffect, useOptimistic, useState } from 'react';
 import PortfolioSelect from './portfolio-select';
 import { Coin, Portfolio } from '@/schemas';
 import { DataTable } from '../../dataTable/data-table';
-import { columns } from '../../dataTable/columns';
+import { columnsPortfolio } from '../../dataTable/columns-portfolio';
 import AssetDialog from './asset/asset-dialog';
 import { getCoinsByPortfolio } from '@/actions/portfolio';
 import { useQuery } from '@tanstack/react-query';
@@ -54,8 +54,6 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 		queryFn: () => getCoinsWatchlist(coinsId)
 	});
 
-	console.log(coinsPortfolio);
-
 	return (
 		<Card>
 			<CardHeader>
@@ -72,7 +70,7 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 				</div>
 				{error && <p className="text-red-500">{error}</p>}
 			</CardContent>
-			<div className="mt-8 text-center">{coinsPortfolio?.length ? <DataTable columns={columns} data={coinsPortfolio} isForPortfolio /> : <p className='mb-8'>No coins</p>}</div>
+			<div className="mt-8 text-center">{coinsPortfolio?.length ? <DataTable columns={columnsPortfolio} data={coinsPortfolio} isForPortfolio /> : <p className="mb-8">No coins</p>}</div>
 		</Card>
 	);
 }
