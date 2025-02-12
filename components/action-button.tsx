@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/t
 interface ActionButtonProps {
 	icon: LucideIcon;
 	label: string;
-	onClick: () => void;
+	onClick?: () => void;
 }
 
 export const ActionButton = ({ icon: Icon, label, onClick }: ActionButtonProps) => {

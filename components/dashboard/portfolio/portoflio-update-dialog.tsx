@@ -4,19 +4,19 @@ import { useState, useTransition } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { createPortfolio } from '@/actions/portfolio';
+import { updatePortfolio } from '@/actions/portfolio';
 import { Portfolio, PortfolioSchema } from '@/schemas';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import * as z from 'zod';
 
-interface PortfolioDialogProps {
-	onOptimisticAdd: (portfolio: Portfolio) => void;
-	userId: string;
+interface PortfolioUpdateDialogProps {
+	portfolio: Portfolio;
+	onUpdate: (updatedPortfolio: Portfolio) => void;
 }
 
-export function PortfolioDialog({ onOptimisticAdd, userId }: PortfolioDialogProps) {
+export function PortfolioUpdateDialog({ portfolio, onUpdate }: PortfolioUpdateDialogProps) {
 	const [open, setOpen] = useState(false);
 	const [isPending, startTransition] = useTransition();
 	const [error, setError] = useState<string | null>(null);
@@ -24,8 +24,8 @@ export function PortfolioDialog({ onOptimisticAdd, userId }: PortfolioDialogProp
 	const form = useForm<z.infer<typeof PortfolioSchema>>({
 		resolver: zodResolver(PortfolioSchema),
 		defaultValues: {
-			name: '',
-			description: ''
+			name: portfolio.name,
+			description: portfolio.description || ''
 		}
 	});
 
@@ -33,28 +33,25 @@ export function PortfolioDialog({ onOptimisticAdd, userId }: PortfolioDialogProp
 		setError('');
 		startTransition(async () => {
 			try {
-				const newPortfolio = {
-					id: crypto.randomUUID(),
+				const updatedPortfolio = {
+					...portfolio,
 					name: values.name,
 					description: values.description || '',
-					userId,
-					createdAt: new Date(),
 					updatedAt: new Date()
 				};
 
-				onOptimisticAdd(newPortfolio);
+				onUpdate(updatedPortfolio);
 
-				await createPortfolio(values.name, values.description || '', userId);
+				await updatePortfolio(portfolio.id, values.name, values.description || '');
 
-				form.reset();
 				setOpen(false);
 			} catch (error) {
 				if (error instanceof Error) {
 					setError(error.message);
 				} else {
-					setError('Failed to create portfolio');
+					setError('Failed to update portfolio');
 				}
-				console.error('Failed to create portfolio:', error);
+				console.error('Failed to update portfolio:', error);
 			}
 		});
 	};
@@ -62,11 +59,11 @@ export function PortfolioDialog({ onOptimisticAdd, userId }: PortfolioDialogProp
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button>Create Portfolio</Button>
+				<Button>Edit Portfolio</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Create new portfolio</DialogTitle>
+					<DialogTitle>Edit Portfolio</DialogTitle>
 				</DialogHeader>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -98,7 +95,7 @@ export function PortfolioDialog({ onOptimisticAdd, userId }: PortfolioDialogProp
 						/>
 						{error && <p className="text-sm text-red-500">{error}</p>}
 						<Button type="submit" disabled={isPending || !form.formState.isValid} className="w-full">
-							{isPending ? 'Creating...' : 'Create Portfolio'}
+							{isPending ? 'Updating...' : 'Update Portfolio'}
 						</Button>
 					</form>
 				</Form>
