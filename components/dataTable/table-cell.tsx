@@ -8,9 +8,11 @@ interface TableCellProps {
 	row: any;
 	toggleFavorite: (id: string) => void;
 	favorites: string[];
+	portoflioId: string;
 }
 
-export function CustomTableCell({ cell, row, toggleFavorite, favorites }: TableCellProps) {
+export function CustomTableCell({ cell, row, toggleFavorite, favorites, portoflioId }: TableCellProps) {
+
 	if (cell.column.id === 'favorite') {
 		return (
 			<button onClick={() => toggleFavorite(row.original.id)} aria-label="Favorite" className="relative group">
@@ -21,7 +23,10 @@ export function CustomTableCell({ cell, row, toggleFavorite, favorites }: TableC
 	}
 
 	if (cell.column.id === 'actions') {
-		return <PortfolioTableActions row={row} />;
+
+		if (portoflioId) {
+			return <PortfolioTableActions row={row} portfolioId={portoflioId} />;
+		}
 	}
 
 	return <Link href={`/coin/${row.original.id}`}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Link>;

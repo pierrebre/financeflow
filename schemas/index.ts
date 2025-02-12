@@ -106,10 +106,17 @@ export interface DataTableProps<TData, TValue> {
 	readonly isLoading?: boolean;
 	readonly isError?: boolean;
 	readonly isForPortfolio?: boolean;
+	readonly portoflioId?: string;
 }
 
 
 // Portfolio schema
+export const PortfolioSchema = z.object({
+	name: z.string().min(2, { message: 'Minimum 2 characters' }).max(15, { message: 'Maximum 15 characters' }),
+	description: z.string().optional()
+});
+
+
 export interface Portfolio {
 	id: string;
 	name: string;

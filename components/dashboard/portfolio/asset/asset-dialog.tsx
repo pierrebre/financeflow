@@ -12,7 +12,7 @@ export default function AssetDialog({ portfolioId }: AssetDialogProps) {
 		<Dialog>
 			<DialogTrigger asChild>
 				<Button variant="outline" className="ml-auto" disabled={!portfolioId}>
-					<Plus size={16} /> Add Coins
+					<Plus size={16} /> Add Coin
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
