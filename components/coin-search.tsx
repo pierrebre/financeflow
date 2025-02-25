@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { Button } from './ui/button';
 import { addCoinToPortfolio } from '@/actions/portfolio';
+import Image from 'next/image';
 
 interface Hit {
 	name: string;
 	symbol: string;
 	id: string;
+	image: string;
 }
 
 export default function CoinSearch({ portfolioId }: { readonly portfolioId: string | undefined }) {
@@ -19,9 +21,12 @@ export default function CoinSearch({ portfolioId }: { readonly portfolioId: stri
 
 	const HitComponent = ({ hit }: { hit: Hit }) => (
 		<div className="p-4 hover:bg-gray-50 flex justify-between">
-			<Link href={`/coin/${hit.id}`}>
-				<p className="font-bold text-gray-900">{hit.name}</p>
-				<p className="text-sm text-gray-600 uppercase">{hit.symbol}</p>
+			<Link href={`/coin/${hit.id}`} className='flex items-center gap-4'>
+				<Image src={hit.image} alt={hit.name} width={30} height={30} />
+				<div className="ml-2">
+					<p className="font-bold text-gray-900">{hit.name}</p>
+					<p className="text-sm text-gray-600 uppercase">{hit.symbol}</p>
+				</div>
 			</Link>
 			<Button variant="ghost" className="gap-1 p-0" onClick={() => addCoin(hit, portfolioId ?? '')}>
 				<Plus size={16} />
