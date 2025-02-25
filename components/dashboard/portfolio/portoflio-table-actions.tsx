@@ -1,28 +1,74 @@
-import { useState } from 'react';
-import { deleteCoinFromPortfolio } from '@/actions/portfolio';
+'use client';
+
+import { useOptimistic, useState, useTransition } from 'react';
 import { ActionButton } from '@/components/action-button';
-import { Plus, X } from 'lucide-react';
+import { Trash} from 'lucide-react';
 import { ConfirmationDialog } from '@/components/confirmation-dialog';
 import { useToast } from '@/hooks/use-toast';
+import { Transaction } from '@/schemas';
+import { TransactionDialog } from './transaction/transaction-dialog';
+import { addTransaction } from '@/actions/transaction';
+import { deleteCoinFromPortfolio } from '@/actions/portfolio';
 
 interface PortfolioTableActionsProps {
 	row: {
 		original: {
 			id: string;
 			name: string;
+			transactions?: Transaction[];
 		};
 	};
 	portfolioId: string;
 }
 
 export const PortfolioTableActions = ({ row, portfolioId }: PortfolioTableActionsProps) => {
+	const initialTransactions = row.original.transactions || [];
+	const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const { toast } = useToast();
+	const [isPending, startTransition] = useTransition();
 
-	const handleAdd = () => {
-		console.log('Add transaction');
-		toast({
-			description: 'Add transaction feature coming soon'
+	const [optimisticTransactions, addOptimisticTransaction] = useOptimistic(transactions, (state, newTransaction: Transaction) => [...state, newTransaction]);
+
+	const handleOptimisticAdd = async (newTransaction: Transaction) => {
+		const transactionWithFees = {
+			...newTransaction,
+			fees: newTransaction.fees === null ? undefined : newTransaction.fees
+		};
+
+		addOptimisticTransaction(transactionWithFees);
+
+		startTransition(async () => {
+			try {
+				await addTransaction({
+					portfolioId: portfolioId,
+					coinId: newTransaction.portfolioCoinId,
+					quantityCrypto: newTransaction.quantityCrypto,
+					amountUsd: newTransaction.amountUsd,
+					type: newTransaction.type,
+					pricePerCoin: newTransaction.pricePerCoin,
+					fees: newTransaction.fees || 0,
+					note: newTransaction.note || ''
+				});
+
+				setTransactions((current) => [...current, transactionWithFees]);
+
+				toast({
+					title: 'Transaction added',
+					description: `Successfully added ${transactionWithFees.type.toLowerCase()} transaction`,
+					variant: 'default'
+				});
+			} catch (error) {
+				console.error('Error adding transaction:', error);
+
+				setTransactions(transactions);
+
+				toast({
+					title: 'Transaction failed',
+					description: 'Failed to add transaction. Please try again.',
+					variant: 'destructive'
+				});
+			}
 		});
 	};
 
@@ -43,8 +89,8 @@ export const PortfolioTableActions = ({ row, portfolioId }: PortfolioTableAction
 
 	return (
 		<div className="flex items-center gap-1">
-			<ActionButton icon={Plus} label="Add transaction" onClick={handleAdd} />
-			<ActionButton icon={X} label="Remove coin" onClick={() => setIsDeleteDialogOpen(true)} />
+			<TransactionDialog coinId={row.original.id} onSubmitTransaction={handleOptimisticAdd} />
+			<ActionButton icon={Trash} label="Remove coin" onClick={() => setIsDeleteDialogOpen(true)} />
 			<ConfirmationDialog
 				isOpen={isDeleteDialogOpen}
 				onClose={() => setIsDeleteDialogOpen(false)}

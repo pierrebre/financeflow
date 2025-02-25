@@ -3,6 +3,8 @@ import { Inter as FontSans } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import Providers from './providers';
 import { SessionProvider } from 'next-auth/react';
+import { Toaster } from "@/components/ui/toaster"
+
 
 import './globals.css';
 import Navbar from '@/components/navbar';
@@ -25,6 +27,7 @@ export default function RootLayout({ children, session }: Readonly<{ children: R
 			<body className={cn('bg-background font-sans antialiased min-h-screen flex flex-col', fontSans.variable)}>
 				<Providers>
 					<SessionProvider session={session}>
+						<Toaster />
 						<div className="container mx-auto mt-4 flex-grow">
 							<Navbar />
 							{children}

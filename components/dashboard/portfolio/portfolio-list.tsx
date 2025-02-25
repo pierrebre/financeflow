@@ -14,6 +14,7 @@ import { getCoinsWatchlist } from '@/data/coin';
 import { Button } from '@/components/ui/button';
 import { ConfirmationDialog } from '@/components/confirmation-dialog';
 import { PortfolioUpdateDialog } from './portoflio-update-dialog';
+import TransactionTable from './transaction/transaction-table';
 
 interface PortfolioListProps {
 	initialPortfolios: Portfolio[];
@@ -85,21 +86,23 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 				<CardTitle>Portfolio</CardTitle>
 				<CardDescription>Manage your portfolios</CardDescription>
 			</CardHeader>
-			<CardContent>
+			<CardContent className='border-b border-gray-200 pb-4'>
 				<div className="flex space-x-4">
 					<PortfolioSelect optimisticPortfolios={optimisticPortfolios} selectedPortfolio={selectedPortfolio} onSelect={handlePortfolioSelection} />
 					<PortfolioDialog userId={userId} onOptimisticAdd={(newPortfolio) => setOptimisticPortfolios([...optimisticPortfolios, newPortfolio])} />
 				</div>
 				<div className="flex lg:space-x-4 lg:flex-row flex-col lg:items-center mt-8">
-					<div className="flex flex-col lg:flex-row lg:items-center lg:space-x-4">
+					<div className="flex flex-col lg:flex-row lg:items-center lg:space-x-4 text-center mb-6">
 						<p className="text-center lg:text-left my-4 lg:my-0">{selectedPortfolio?.name}</p>
 						<p className="text-gray-500">{selectedPortfolio?.description}</p>
 					</div>
-					<div className="flex space-x-4">
-						<Button variant="outline" className="ml-auto" disabled={!selectedPortfolio} onClick={() => setIsDeleteDialogOpen(true)}>
-							Delete portfolio
-						</Button>
-						{selectedPortfolio && <PortfolioUpdateDialog portfolio={selectedPortfolio} onUpdate={handleUpdatePortfolio} />}
+					<div className="flex flex-wrap lg:flex-row lg:space-x-4 lg:justify-between">
+						<div className='flex space-x-4 mb-4'>
+							<Button variant="outline" disabled={!selectedPortfolio} onClick={() => setIsDeleteDialogOpen(true)}>
+								Delete portfolio
+							</Button>
+							{selectedPortfolio && <PortfolioUpdateDialog portfolio={selectedPortfolio} onUpdate={handleUpdatePortfolio} />}
+						</div>
 						<AssetDialog portfolioId={selectedPortfolio?.id} />
 					</div>
 				</div>
@@ -118,6 +121,8 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 
 				{error && <p className="text-red-500">{error}</p>}
 			</CardContent>
+
+			<TransactionTable portfolioId={selectedPortfolio?.id || ''} />
 			<div className="mt-8 text-center">{coinsPortfolio?.length ? <DataTable columns={columnsPortfolio} data={coinsPortfolio} portoflioId={selectedPortfolio?.id} isForPortfolio /> : <p className="mb-8">No coins</p>}</div>
 		</Card>
 	);
