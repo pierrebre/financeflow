@@ -23,17 +23,16 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 	const form = useForm<z.infer<typeof TransactionSchema>>({
 		resolver: zodResolver(TransactionSchema),
 		defaultValues: {
-			portfolioCoinId: transaction?.portfolioCoinId || '',
-			quantityCrypto: transaction?.quantityCrypto || 0,
-			amountUsd: transaction?.amountUsd || 0,
-			type: transaction?.type || ('ACHAT' as TransactionType),
-			pricePerCoin: transaction?.pricePerCoin || 0,
-			fees: transaction?.fees || 0,
-			note: transaction?.note || ''
+			portfolioCoinId: transaction?.portfolioCoinId ?? '',
+			quantityCrypto: transaction?.quantityCrypto ?? 0,
+			amountUsd: transaction?.amountUsd ?? 0,
+			type: transaction?.type ?? ('ACHAT' as TransactionType),
+			pricePerCoin: transaction?.pricePerCoin ?? 0,
+			fees: transaction?.fees ?? 0,
+			note: transaction?.note ?? ''
 		}
 	});
 
-	// Mettre à jour les valeurs du formulaire quand la transaction ou la pièce change
 	useEffect(() => {
 		if (transaction) {
 			form.reset({
@@ -42,8 +41,8 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 				amountUsd: transaction.amountUsd,
 				type: transaction.type,
 				pricePerCoin: transaction.pricePerCoin,
-				fees: transaction.fees || 0,
-				note: transaction.note || ''
+				fees: transaction.fees ?? 0,
+				note: transaction.note ?? ''
 			});
 		} else if (coin?.id) {
 			form.setValue('portfolioCoinId', coin.id);
@@ -53,7 +52,6 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 		}
 	}, [transaction, coin, form, isEditMode]);
 
-	// Observer les changements de quantity et pricePerCoin pour calculer amountUsd
 	useEffect(() => {
 		const subscription = form.watch((value, { name }) => {
 			if ((name === 'quantityCrypto' || name === 'pricePerCoin') && value.quantityCrypto && value.pricePerCoin) {
@@ -77,7 +75,7 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 							<FormItem>
 								<FormLabel htmlFor={field.name}>Coin</FormLabel>
 								<FormControl>
-									<Input {...field} placeholder="Coin" disabled value={coin?.name || 'Loading...'} />
+									<Input {...field} placeholder="Coin" disabled value={coin?.id ?? 'Loading...'} />
 								</FormControl>
 								<FormMessage />
 							</FormItem>

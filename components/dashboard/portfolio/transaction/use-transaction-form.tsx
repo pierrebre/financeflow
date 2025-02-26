@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Transaction, TransactionSchema } from '@/schemas';
-import { Coin } from '@/schemas';
+import { Transaction, TransactionSchema, Coin } from '@/schemas';
 import { getCoinData } from '@/data/coin';
 import * as z from 'zod';
 
@@ -11,22 +10,40 @@ export function useTransactionForm(coinId: string, transaction?: Transaction, on
 	const [coin, setCoin] = useState<Coin | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [shouldFetchData, setShouldFetchData] = useState(false);
+
+	const fetchCoinData = async () => {
+		if (!coinId || !shouldFetchData) {
+			return;
+		}
+
+		try {
+			setIsLoading(true);
+			const coinData = await getCoinData(coinId);
+			setCoin(coinData);
+		} catch (error) {
+			console.error('Failed to fetch coin data:', error);
+			setError('Failed to fetch coin data');
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	useEffect(() => {
-		if (coinId) {
-			setIsLoading(true);
-			getCoinData(coinId)
-				.then((data) => {
-					setCoin(data);
-					setIsLoading(false);
-				})
-				.catch((err) => {
-					console.error('Failed to fetch coin data:', err);
-					setError('Failed to fetch coin data');
-					setIsLoading(false);
-				});
+		if (shouldFetchData) {
+			fetchCoinData();
 		}
-	}, [coinId]);
+	}, [coinId, shouldFetchData]);
+
+	useEffect(() => {
+		if (isEditMode && !coin && coinId) {
+			setShouldFetchData(true);
+		}
+	}, [isEditMode, coin, coinId]);
+
+	const initializeForm = () => {
+		setShouldFetchData(true);
+	};
 
 	const handleSubmit = (values: z.infer<typeof TransactionSchema>) => {
 		setError(null);
@@ -70,6 +87,7 @@ export function useTransactionForm(coinId: string, transaction?: Transaction, on
 		error,
 		isLoading,
 		isEditMode,
-		handleSubmit
+		handleSubmit,
+		initializeForm
 	};
 }

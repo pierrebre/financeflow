@@ -125,11 +125,13 @@ export interface Portfolio {
 }
 
 // Transaction schema
+
 export type TransactionType = z.infer<typeof TransactionTypeSchema>;
 
 export type Transaction = {
 	id: string;
 	portfolioCoinId: string;
+	portfolioCoin?: any;
 	quantityCrypto: number;
 	amountUsd: number;
 	type: TransactionType;
