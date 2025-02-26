@@ -36,10 +36,6 @@ export function DataTable<TData, TValue>({ columns, data, isLoading = false, isE
 		return <ErrorState />;
 	}
 
-	if(!portoflioId){
-		return <ErrorState />;
-	}
-
 	return (
 		<div className={cn(isForPortfolio ? 'border-t' : 'rounded-md border mb-8')}>
 			<Table>
@@ -58,7 +54,7 @@ export function DataTable<TData, TValue>({ columns, data, isLoading = false, isE
 							<TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>
-										<CustomTableCell cell={cell} row={row} toggleFavorite={toggleFavorite} favorites={favorites} portoflioId={portoflioId} />
+										<CustomTableCell cell={cell} row={row} toggleFavorite={toggleFavorite} favorites={favorites} portoflioId={portoflioId ?? ''} />
 									</TableCell>
 								))}
 							</TableRow>
