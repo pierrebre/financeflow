@@ -2,12 +2,19 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PortfolioDialog } from './portfolio-dialog';
-import { useOptimistic, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PortfolioSelect from './portfolio-select';
-import { Portfolio } from '@/schemas';
+import { Coin, Portfolio } from '@/schemas';
 import { DataTable } from '../../dataTable/data-table';
-import { columns } from '../../dataTable/columns';
+import { columnsPortfolio } from '../../dataTable/columns-portfolio';
 import AssetDialog from './asset/asset-dialog';
+import { deletePortfolio, getCoinsByPortfolio, updatePortfolio } from '@/actions/portfolio';
+import { useQuery } from '@tanstack/react-query';
+import { getCoinsWatchlist } from '@/data/coin';
+import { Button } from '@/components/ui/button';
+import { ConfirmationDialog } from '@/components/confirmation-dialog';
+import { PortfolioUpdateDialog } from './portoflio-update-dialog';
+import TransactionTable from './transaction/transaction-table';
 
 interface PortfolioListProps {
 	initialPortfolios: Portfolio[];
@@ -15,11 +22,13 @@ interface PortfolioListProps {
 }
 
 export default function PortfolioList({ initialPortfolios, userId }: Readonly<PortfolioListProps>) {
-	const [optimisticPortfolios, addOptimisticPortfolio] = useOptimistic<Portfolio[], Portfolio>(initialPortfolios, (state, newPortfolio) => [...state, newPortfolio]);
+	const [optimisticPortfolios, setOptimisticPortfolios] = useState<Portfolio[]>(initialPortfolios);
 	const [selectedPortfolio, setSelectedPortfolio] = useState<Portfolio | null>(null);
+	const [coinsId, setCoinsId] = useState<string[]>([]);
 	const [error, setError] = useState<string | null>(null);
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-	function handlePortfolioSelection(id: string) {
+	const handlePortfolioSelection = (id: string) => {
 		const portfolio = optimisticPortfolios.find((p) => p.id === id);
 		if (!portfolio) {
 			setError('Portfolio not found');
@@ -27,10 +36,49 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 		}
 		setError(null);
 		setSelectedPortfolio(portfolio);
-	}
+	};
 
-	console.log(selectedPortfolio);
-	const data: any = [];
+	const fetchCoinsFromPortfolio = async () => {
+		if (!selectedPortfolio) return;
+		try {
+			const data = await getCoinsByPortfolio(selectedPortfolio.id);
+			setCoinsId(data.map((coin: any) => coin.coinId));
+		} catch (error) {
+			console.error('Error fetching coins:', error);
+		}
+	};
+
+	const handleDeletePortfolio = async () => {
+		if (!selectedPortfolio) return;
+		try {
+			const result = await deletePortfolio(selectedPortfolio.id);
+			if (result) {
+				setSelectedPortfolio(null);
+				setCoinsId([]);
+				setOptimisticPortfolios(optimisticPortfolios.filter((p) => p.id !== selectedPortfolio.id));
+			}
+		} catch (error) {
+			console.error('Error deleting portfolio:', error);
+		}
+	};
+
+	const handleUpdatePortfolio = (updatedPortfolio: Portfolio) => {
+		setOptimisticPortfolios(optimisticPortfolios.map((p) => (p.id === updatedPortfolio.id ? updatedPortfolio : p)));
+	};
+
+	useEffect(() => {
+		fetchCoinsFromPortfolio();
+	}, [selectedPortfolio]);
+
+	const {
+		data: coinsPortfolio,
+		isError,
+		isLoading
+	} = useQuery({
+		queryKey: ['coinsPortfolio', coinsId],
+		queryFn: () => getCoinsWatchlist(coinsId),
+		enabled: !!selectedPortfolio
+	});
 
 	return (
 		<Card>
@@ -38,17 +86,44 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 				<CardTitle>Portfolio</CardTitle>
 				<CardDescription>Manage your portfolios</CardDescription>
 			</CardHeader>
-			<CardContent>
-				<div className="mb-4">
-					<PortfolioDialog userId={userId} onOptimisticAdd={addOptimisticPortfolio} />
-				</div>
+			<CardContent className="border-b border-gray-200 pb-4">
 				<div className="flex space-x-4">
 					<PortfolioSelect optimisticPortfolios={optimisticPortfolios} selectedPortfolio={selectedPortfolio} onSelect={handlePortfolioSelection} />
-					<AssetDialog portfolioId={selectedPortfolio?.id} />
+					<PortfolioDialog userId={userId} onOptimisticAdd={(newPortfolio) => setOptimisticPortfolios([...optimisticPortfolios, newPortfolio])} />
 				</div>
+				<div className="flex lg:space-x-4 lg:flex-row flex-col lg:items-center mt-8">
+					<div className="flex flex-col lg:flex-row lg:items-center lg:space-x-4 text-center mb-6">
+						<p className="text-center lg:text-left my-4 lg:my-0">{selectedPortfolio?.name}</p>
+						<p className="text-gray-500">{selectedPortfolio?.description}</p>
+					</div>
+					<div className="flex flex-wrap lg:flex-row lg:space-x-4 lg:justify-between">
+						<div className="flex space-x-4 mb-4">
+							<Button variant="outline" disabled={!selectedPortfolio} onClick={() => setIsDeleteDialogOpen(true)}>
+								Delete portfolio
+							</Button>
+							{selectedPortfolio && <PortfolioUpdateDialog portfolio={selectedPortfolio} onUpdate={handleUpdatePortfolio} />}
+						</div>
+						<AssetDialog portfolioId={selectedPortfolio?.id} />
+					</div>
+				</div>
+
+				<ConfirmationDialog
+					isOpen={isDeleteDialogOpen}
+					onClose={() => setIsDeleteDialogOpen(false)}
+					onConfirm={handleDeletePortfolio}
+					title={`Delete ${selectedPortfolio?.name}`}
+					description="Are you sure you want to delete this portfolio? This action cannot be undone and will remove all coins associated with this portfolio."
+					confirmText="Delete Portfolio"
+					loadingText="Deleting..."
+					successMessage="Portfolio deleted successfully"
+					errorMessage="Failed to delete portfolio"
+				/>
+
 				{error && <p className="text-red-500">{error}</p>}
 			</CardContent>
-			<div className="my-8 text-center">{data.length !== 0 ? <DataTable columns={columns} data={data} isForPortfolio /> : <p>No assets</p>}</div>
+
+			<TransactionTable portfolioId={selectedPortfolio?.id || ''} />
+			<div className="mt-8 text-center">{coinsPortfolio?.length ? <DataTable columns={columnsPortfolio} data={coinsPortfolio} portoflioId={selectedPortfolio?.id} isForPortfolio /> : <p className="mb-8">No coins</p>}</div>
 		</Card>
 	);
 }
