@@ -3,8 +3,8 @@ import { LucideIcon } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 interface ActionButtonProps {
-	icon: LucideIcon;
-	label: string;
+	icon: React.ElementType; // Changé de LucideIcon à React.ElementType
+	label?: string; // Rendu optionnel car il manque dans certains appels
 	onClick?: () => void;
 }
 
@@ -17,9 +17,11 @@ export const ActionButton = ({ icon: Icon, label, onClick }: ActionButtonProps) 
 						<Icon className="h-4 w-4 text-gray-600" />
 					</button>
 				</TooltipTrigger>
-				<TooltipContent className="bg-gray-800 text-white text-xs px-2 py-1 rounded" sideOffset={5}>
-					{label}
-				</TooltipContent>
+				{label && (
+					<TooltipContent className="bg-gray-800 text-white text-xs px-2 py-1 rounded" sideOffset={5}>
+						{label}
+					</TooltipContent>
+				)}
 			</Tooltip>
 		</TooltipProvider>
 	);

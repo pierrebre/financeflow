@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Star } from 'lucide-react';
 import { flexRender } from '@tanstack/react-table';
 import { PortfolioTableActions } from '../dashboard/portfolio/portoflio-table-actions';
+import { TransactionProvider } from '../dashboard/portfolio/transaction/transaction-provider';
 
 interface TableCellProps {
 	cell: any;
@@ -12,7 +13,6 @@ interface TableCellProps {
 }
 
 export function CustomTableCell({ cell, row, toggleFavorite, favorites, portoflioId }: TableCellProps) {
-
 	if (cell.column.id === 'favorite') {
 		return (
 			<button onClick={() => toggleFavorite(row.original.id)} aria-label="Favorite" className="relative group">
@@ -23,9 +23,12 @@ export function CustomTableCell({ cell, row, toggleFavorite, favorites, portofli
 	}
 
 	if (cell.column.id === 'actions') {
-
 		if (portoflioId) {
-			return <PortfolioTableActions row={row} portfolioId={portoflioId} />;
+			return (
+				<TransactionProvider portfolioId={portoflioId} coinId={row.original.id}>
+					<PortfolioTableActions row={row} portfolioId={portoflioId} />
+				</TransactionProvider>
+			);
 		}
 	}
 
