@@ -86,7 +86,7 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 				<CardTitle>Portfolio</CardTitle>
 				<CardDescription>Manage your portfolios</CardDescription>
 			</CardHeader>
-			<CardContent className='border-b border-gray-200 pb-4'>
+			<CardContent className="border-b border-gray-200 pb-4">
 				<div className="flex space-x-4">
 					<PortfolioSelect optimisticPortfolios={optimisticPortfolios} selectedPortfolio={selectedPortfolio} onSelect={handlePortfolioSelection} />
 					<PortfolioDialog userId={userId} onOptimisticAdd={(newPortfolio) => setOptimisticPortfolios([...optimisticPortfolios, newPortfolio])} />
@@ -97,7 +97,7 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 						<p className="text-gray-500">{selectedPortfolio?.description}</p>
 					</div>
 					<div className="flex flex-wrap lg:flex-row lg:space-x-4 lg:justify-between">
-						<div className='flex space-x-4 mb-4'>
+						<div className="flex space-x-4 mb-4">
 							<Button variant="outline" disabled={!selectedPortfolio} onClick={() => setIsDeleteDialogOpen(true)}>
 								Delete portfolio
 							</Button>
