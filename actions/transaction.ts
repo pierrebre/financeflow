@@ -16,24 +16,37 @@ interface AddTransactionParams {
 }
 
 export async function addTransaction(params: AddTransactionParams) {
-	const { portfolioId, coinId, quantityCrypto, amountUsd, type, pricePerCoin, fees = 0, note = '' } = params;
+	const { portfolioId, coinId, quantityCrypto, amountUsd, type, pricePerCoin, fees, note } = params;
+
+	if (!portfolioId || !coinId || !quantityCrypto || !amountUsd || !type || !pricePerCoin) {
+		throw new Error('Missing required transaction parameters');
+	}
 
 	try {
-		const portfolioCoin = await prisma.portfolioCoin.findUnique({
+		const portfolio = await prisma.portfolio.findUnique({
+			where: { id: portfolioId }
+		});
+
+		if (!portfolio) {
+			throw new Error('Portfolio not found');
+		}
+
+		let portfolioCoin = await prisma.portfolioCoin.findUnique({
 			where: {
 				portfolioId_coinId: {
 					portfolioId,
 					coinId
 				}
-			},
-			include: {
-				portfolio: true
 			}
 		});
 
 		if (!portfolioCoin) {
-			console.error('Portfolio coin not found for portfolioId and coinId:', { portfolioId, coinId });
-			throw new Error('Portfolio coin not found');
+			portfolioCoin = await prisma.portfolioCoin.create({
+				data: {
+					portfolioId,
+					coinId
+				}
+			});
 		}
 
 		const transaction = await prisma.transaction.create({
@@ -43,14 +56,15 @@ export async function addTransaction(params: AddTransactionParams) {
 				amountUsd,
 				type,
 				pricePerCoin,
-				fees,
-				note
+				fees: fees || 0,
+				note,
+				date: new Date()
 			}
 		});
 
-		revalidatePath(`/dashboard/portfolio/${portfolioCoin.portfolio.id}`);
+		revalidatePath(`/portfolios/${portfolioId}`);
 
-		return { success: true, transaction };
+		return transaction;
 	} catch (error) {
 		console.error('Error adding transaction:', error);
 		throw error;
