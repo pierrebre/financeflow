@@ -1,19 +1,8 @@
 'use server';
 
 import prisma from '@/lib/prisma';
+import { Portfolio, PortfolioCoin } from '@/schemas';
 import { revalidatePath } from 'next/cache';
-
-interface Portfolio {
-	id: string;
-	name: string;
-	description: string | null;
-	userId: string;
-}
-
-interface PortfolioCoin {
-	portfolioId: string;
-	coinId: string;
-}
 
 class PortfolioError extends Error {
 	constructor(
@@ -25,7 +14,7 @@ class PortfolioError extends Error {
 	}
 }
 
-const handleDatabaseError = (error: unknown, operation: string) => {
+const handleDatabaseError = (error: unknown, operation: string): never => {
 	console.error(`Error during ${operation}:`, error);
 	if (error instanceof Error) {
 		throw new PortfolioError(error.message, 'DATABASE_ERROR');
@@ -49,7 +38,7 @@ export async function createPortfolio(name: string, description: string, userId:
 		revalidatePath('/dashboard');
 		return portfolio;
 	} catch (error) {
-		handleDatabaseError(error, 'portfolio creation');
+		return handleDatabaseError(error, 'portfolio creation');
 	}
 }
 
@@ -59,22 +48,35 @@ export async function addCoinToPortfolio(portfolioId: string, coinId: string): P
 	}
 
 	try {
-		// Use upsert to handle the coin creation in a single operation
-		await prisma.coin.upsert({
-			where: { CoinId: coinId },
-			create: { CoinId: coinId },
-			update: {}
+		let coin = await prisma.coin.findUnique({
+			where: { CoinId: coinId }
 		});
 
-		return await prisma.portfolioCoin.create({
-			data: { portfolioId, coinId }
+		if (!coin) {
+			await prisma.coin.create({
+				data: { CoinId: coinId }
+			});
+		}
+
+		const portfolioCoin = await prisma.portfolioCoin.create({
+			data: {
+				portfolioId,
+				coinId
+			}
 		});
+
+		revalidatePath(`/portfolio/${portfolioId}`);
+		return portfolioCoin;
 	} catch (error) {
-		handleDatabaseError(error, 'adding coin to portfolio');
+		return handleDatabaseError(error, 'adding coin to portfolio');
 	}
 }
 
 export async function deleteCoinFromPortfolio(coinId: string, portfolioId: string): Promise<PortfolioCoin> {
+	if (!coinId || !portfolioId) {
+		throw new PortfolioError('Coin ID and Portfolio ID are required', 'VALIDATION_ERROR');
+	}
+
 	try {
 		const result = await prisma.portfolioCoin.delete({
 			where: {
@@ -88,8 +90,8 @@ export async function deleteCoinFromPortfolio(coinId: string, portfolioId: strin
 		revalidatePath(`/portfolio/${portfolioId}`);
 		return result;
 	} catch (error) {
-		console.error('Delete error:', error); // Log pour debug
-		handleDatabaseError(error, 'deleting coin from portfolio');
+		console.error('Delete error:', error);
+		return handleDatabaseError(error, 'deleting coin from portfolio');
 	}
 }
 
@@ -99,18 +101,34 @@ export async function getCoinsByPortfolio(portfolioId: string): Promise<Portfoli
 	}
 
 	try {
-		return await prisma.portfolioCoin.findMany({
+		const result = await prisma.portfolioCoin.findMany({
 			where: { portfolioId },
 			include: {
 				coin: true
 			}
 		});
+
+		return result.map((item) => ({
+			id: item.id,
+			portfolioId: item.portfolioId,
+			coinId: item.coinId,
+			coin: item.coin
+				? {
+						id: item.coin.CoinId,
+						name: item.coin.CoinId
+					}
+				: undefined
+		}));
 	} catch (error) {
-		handleDatabaseError(error, 'fetching portfolio coins');
+		return handleDatabaseError(error, 'fetching portfolio coins');
 	}
 }
 
 export async function deletePortfolio(portfolioId: string): Promise<Portfolio | null> {
+	if (!portfolioId) {
+		throw new PortfolioError('Portfolio ID is required', 'VALIDATION_ERROR');
+	}
+
 	try {
 		const result = await prisma.portfolio.delete({
 			where: {
@@ -121,11 +139,14 @@ export async function deletePortfolio(portfolioId: string): Promise<Portfolio | 
 		revalidatePath('/dashboard');
 		return result;
 	} catch (error) {
-		handleDatabaseError(error, 'deleting portfolio');
+		return handleDatabaseError(error, 'deleting portfolio');
 	}
 }
 
 export async function updatePortfolio(portfolioId: string, name: string, description: string): Promise<Portfolio> {
+	if (!portfolioId) {
+		throw new PortfolioError('Portfolio ID is required', 'VALIDATION_ERROR');
+	}
 	if (!name?.trim()) {
 		throw new PortfolioError('Portfolio name is required', 'VALIDATION_ERROR');
 	}
@@ -147,7 +168,6 @@ export async function updatePortfolio(portfolioId: string, name: string, descrip
 		revalidatePath(`/portfolio/${portfolioId}`);
 		return portfolio;
 	} catch (error) {
-		handleDatabaseError(error, 'updating portfolio');
-		throw error;
+		return handleDatabaseError(error, 'updating portfolio');
 	}
 }
