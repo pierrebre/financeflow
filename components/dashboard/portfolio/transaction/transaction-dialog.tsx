@@ -20,8 +20,7 @@ interface TransactionDialogProps {
 
 export function TransactionDialog({ onSubmitTransaction, coinId, transaction, triggerIcon, triggerLabel }: TransactionDialogProps) {
 	const [open, setOpen] = useState(false);
-
-	const { coin, error, isLoading, isEditMode, handleSubmit } = useTransactionForm(coinId, transaction, (newTransaction) => {
+	const { coin, error, isLoading, isEditMode, handleSubmit, initializeForm } = useTransactionForm(coinId, transaction, (newTransaction) => {
 		onSubmitTransaction(newTransaction);
 		setOpen(false);
 	});
@@ -36,10 +35,15 @@ export function TransactionDialog({ onSubmitTransaction, coinId, transaction, tr
 		}
 	};
 
+	const handleOpenDialog = () => {
+		initializeForm();
+		setOpen(true);
+	};
+
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<ActionButton icon={icon} label={label} onClick={() => setOpen(true)} />
+				<ActionButton icon={icon} label={label} onClick={handleOpenDialog} />
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>

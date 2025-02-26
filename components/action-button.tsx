@@ -13,7 +13,7 @@ export const ActionButton = ({ icon: Icon, label, onClick }: ActionButtonProps) 
 		<TooltipProvider>
 			<Tooltip delayDuration={300}>
 				<TooltipTrigger asChild>
-					<button onClick={onClick} className="p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label={label}>
+					<button onClick={onClick || undefined} className="p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label={label}>
 						<Icon className="h-4 w-4 text-gray-600" />
 					</button>
 				</TooltipTrigger>

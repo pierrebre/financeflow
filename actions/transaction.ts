@@ -104,7 +104,16 @@ export async function getTransactions(portfolioId: string): Promise<Transaction[
 				}
 			},
 			include: {
-				portfolioCoin: true
+				portfolioCoin: {
+					select: {
+						id: true,
+						coinId: true,
+						portfolioId: true
+					}
+				}
+			},
+			orderBy: {
+				date: 'desc'
 			}
 		});
 

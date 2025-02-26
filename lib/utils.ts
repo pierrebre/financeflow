@@ -86,7 +86,7 @@ export function formatTransactionForDisplay(transaction: Transaction) {
 	return {
 		...transaction,
 		formattedAmount: `$${transaction.amountUsd.toFixed(2)}`,
-		formattedQuantity: transaction.quantityCrypto.toFixed(8),
+		formattedQuantity: transaction.quantityCrypto.toFixed(2),
 		formattedPrice: `$${transaction.pricePerCoin.toFixed(2)}`,
 		formattedFees: transaction.fees ? `$${transaction.fees.toFixed(2)}` : '$0.00',
 		formattedDate: transaction.date ? new Date(transaction.date).toLocaleDateString() : 'N/A'

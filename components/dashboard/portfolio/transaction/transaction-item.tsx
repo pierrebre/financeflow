@@ -8,11 +8,13 @@ import { formatTransactionForDisplay } from '@/lib/utils';
 
 interface TransactionItemProps {
 	transaction: Transaction;
+	coinId: string;
 	onUpdate: (transaction: Transaction) => void;
 	onDelete: (transaction: Transaction) => void;
 }
 
-export function TransactionItem({ transaction, onUpdate, onDelete }: TransactionItemProps) {
+export function TransactionItem({ transaction, onUpdate, onDelete, coinId }: TransactionItemProps) {
+
 	const displayTransaction = formatTransactionForDisplay(transaction);
 
 	return (
@@ -29,7 +31,16 @@ export function TransactionItem({ transaction, onUpdate, onDelete }: Transaction
 			{transaction.note && <div className="text-xs text-gray-500 italic ml-2 mr-4">{transaction.note}</div>}
 
 			<div className="flex gap-2">
-				<TransactionDialog coinId={transaction.portfolioCoinId} transaction={transaction} onSubmitTransaction={onUpdate} triggerIcon={<Pencil size={16} />} triggerLabel="Edit transaction" />
+				<TransactionDialog
+					coinId={coinId}
+					transaction={{
+						...transaction,
+						portfolioCoin: transaction.portfolioCoin || { coinId, id: transaction.portfolioCoinId }
+					}}
+					onSubmitTransaction={onUpdate}
+					triggerIcon={<Pencil size={16} />}
+					triggerLabel="Edit transaction"
+				/>
 				<ActionButton icon={Trash} label="Remove transaction" onClick={() => onDelete(transaction)} />
 			</div>
 		</div>
