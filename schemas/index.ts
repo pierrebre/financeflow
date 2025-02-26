@@ -124,6 +124,16 @@ export interface Portfolio {
 	updatedAt: Date;
 }
 
+export interface PortfolioCoin {
+	id: string;
+	portfolioId: string;
+	coinId: string;
+	coin?: {
+		id?: string;
+		name?: string;
+	};
+}
+
 // Transaction schema
 
 export type TransactionType = z.infer<typeof TransactionTypeSchema>;
@@ -152,5 +162,6 @@ export const TransactionSchema = z.object({
 	type: z.enum(['ACHAT', 'VENTE']),
 	pricePerCoin: z.number().min(0, 'Price must be a positive number'),
 	fees: z.number().min(0, 'Fees must be a positive number').optional(),
-	note: z.string().optional()
+	note: z.string().optional(),
+	date: z.date().optional()
 });
