@@ -1,6 +1,7 @@
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { Button } from './ui/button';
 
 interface ActionButtonProps {
 	icon: React.ReactNode;
@@ -13,7 +14,7 @@ export const ActionButton = ({ icon, label, onClick }: ActionButtonProps) => {
 		<TooltipProvider>
 			<Tooltip delayDuration={300}>
 				<TooltipTrigger asChild>
-					<button onClick={onClick || undefined} className="p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label={label}>
+					<button onClick={onClick || undefined} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
 						{icon}
 					</button>
 				</TooltipTrigger>
