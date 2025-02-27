@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Coin, Transaction, TransactionSchema, TransactionType } from '@/schemas';
+import { Transaction, TransactionSchema, TransactionType, Coin } from '@/schemas';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -20,15 +20,13 @@ import Image from 'next/image';
 interface TransactionFormProps {
 	onSubmit: (values: z.infer<typeof TransactionSchema>) => void;
 	transaction?: Transaction;
-	coin: Coin | null;
+	coin?: Coin | null;
 	isPending: boolean;
 	error: string | null;
-	isEditMode: boolean;
+	isEditMode?: boolean;
 }
 
-export function TransactionForm({ onSubmit, transaction, coin, isPending, error, isEditMode }: TransactionFormProps) {
-	const [calculatedTotal, setCalculatedTotal] = useState<number | null>(null);
-
+export function TransactionForm({ onSubmit, transaction, coin, isPending, error, isEditMode = false }: TransactionFormProps) {
 	const extendedSchema = TransactionSchema.extend({
 		transactionDate: z.date().optional()
 	});
@@ -47,54 +45,24 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 		}
 	});
 
+	const calculatedTotal = useMemo(() => {
+		const quantity = form.watch('quantityCrypto') || 0;
+		const price = form.watch('pricePerCoin') || 0;
+		return quantity * price;
+	}, [form.watch('quantityCrypto'), form.watch('pricePerCoin')]);
+
 	useEffect(() => {
-		if (transaction) {
-			form.reset({
-				portfolioCoinId: transaction.portfolioCoinId,
-				quantityCrypto: transaction.quantityCrypto,
-				amountUsd: transaction.amountUsd,
-				type: transaction.type,
-				pricePerCoin: transaction.pricePerCoin,
-				fees: transaction.fees ?? 0,
-				note: transaction.note ?? '',
-				transactionDate: transaction.date
-			});
-		} else if (coin?.id) {
-			form.setValue('portfolioCoinId', coin.id);
-			if (coin.current_price && !isEditMode) {
-				form.setValue('pricePerCoin', coin.current_price);
-			}
+		if (calculatedTotal !== form.getValues('amountUsd')) {
+			form.setValue('amountUsd', calculatedTotal);
 		}
-	}, [transaction, coin, form, isEditMode]);
-
-	useEffect(() => {
-		const subscription = form.watch((value, { name }) => {
-			if (name === 'quantityCrypto' || name === 'pricePerCoin' || name === 'fees') {
-				const quantity = Number(value.quantityCrypto) || 0;
-				const price = Number(value.pricePerCoin) || 0;
-				const fees = Number(value.fees) || 0;
-
-				const calculatedAmount = quantity * price;
-				setCalculatedTotal(calculatedAmount);
-
-				form.setValue('amountUsd', calculatedAmount);
-			}
-		});
-
-		return () => subscription.unsubscribe();
-	}, [form]);
+	}, [calculatedTotal, form]);
 
 	const handleFormSubmit = (values: z.infer<typeof extendedSchema>) => {
 		const { transactionDate, ...transactionValues } = values;
-
-		if (transactionDate) {
-			onSubmit({
-				...transactionValues,
-				date: transactionDate
-			});
-		} else {
-			onSubmit(transactionValues);
-		}
+		onSubmit({
+			...transactionValues,
+			date: transactionDate ?? new Date()
+		});
 	};
 
 	return (
@@ -123,19 +91,22 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 						render={({ field }) => (
 							<FormItem>
 								<FormControl>
-									<RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-4 mb-4">
+									<RadioGroup defaultValue={field.value} onValueChange={field.onChange} value={field.value} className="flex gap-4 mb-4">
 										<div className={cn('flex-1 flex items-center justify-center gap-2 p-3 rounded-md border cursor-pointer transition-colors', field.value === 'ACHAT' ? 'bg-green-50 border-green-200 text-green-600 dark:bg-green-900/20 dark:border-green-800' : 'hover:bg-gray-50 dark:hover:bg-gray-800')}>
-											<FormControl>
-												<RadioGroupItem value="ACHAT" className="sr-only" />
-											</FormControl>
-											<FormLabel className="cursor-pointer m-0 font-medium">Buy</FormLabel>
+											<FormItem>
+												<FormControl>
+													<RadioGroupItem value="ACHAT" className="sr-only" />
+												</FormControl>
+												<FormLabel className="cursor-pointer m-0 font-medium">Buy</FormLabel>
+											</FormItem>
 										</div>
-
 										<div className={cn('flex-1 flex items-center justify-center gap-2 p-3 rounded-md border cursor-pointer transition-colors', field.value === 'VENTE' ? 'bg-red-50 border-red-200 text-red-600 dark:bg-red-900/20 dark:border-red-800' : 'hover:bg-gray-50 dark:hover:bg-gray-800')}>
-											<FormControl>
-												<RadioGroupItem value="VENTE" className="sr-only" />
-											</FormControl>
-											<FormLabel className="cursor-pointer m-0 font-medium">Sell</FormLabel>
+											<FormItem>
+												<FormControl>
+													<RadioGroupItem value="VENTE" className="sr-only" />
+												</FormControl>
+												<FormLabel className="cursor-pointer m-0 font-medium">Sell</FormLabel>
+											</FormItem>
 										</div>
 									</RadioGroup>
 								</FormControl>
@@ -178,25 +149,12 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 										</TooltipProvider>
 									</FormLabel>
 									<FormControl>
-										<Input
-											{...fieldProps}
-											type="number"
-											step="any"
-											placeholder="0.00"
-											disabled={isPending}
-											onChange={(e) => {
-												const value = e.target.valueAsNumber || 0;
-												onChange(value);
-											}}
-											value={fieldProps.value === 0 ? '' : fieldProps.value}
-											className="text-right"
-										/>
+										<Input {...fieldProps} type="number" step="any" placeholder="0.00" disabled={isPending} onChange={(e) => onChange(e.target.valueAsNumber || 0)} value={fieldProps.value === 0 ? '' : fieldProps.value} className="text-right" />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
-
 						<FormField
 							control={form.control}
 							name="pricePerCoin"
@@ -218,18 +176,7 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 									<FormControl>
 										<div className="relative">
 											<span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-											<Input
-												{...fieldProps}
-												type="number"
-												step="any"
-												placeholder="0.00"
-												onChange={(e) => {
-													const newPrice = e.target.valueAsNumber || 0;
-													onChange(newPrice);
-												}}
-												value={fieldProps.value || ''}
-												className="pl-7 text-right"
-											/>
+											<Input {...fieldProps} type="number" step="any" placeholder="0.00" onChange={(e) => onChange(e.target.valueAsNumber || 0)} value={fieldProps.value === 0 ? '' : fieldProps.value} className="pl-7 text-right" />
 										</div>
 									</FormControl>
 									<FormMessage />
@@ -272,7 +219,6 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 								</FormItem>
 							)}
 						/>
-
 						<FormField
 							control={form.control}
 							name="fees"
@@ -326,7 +272,6 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 								</FormItem>
 							)}
 						/>
-
 						<FormField
 							control={form.control}
 							name="note"

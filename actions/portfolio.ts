@@ -48,14 +48,35 @@ export async function addCoinToPortfolio(portfolioId: string, coinId: string): P
 	}
 
 	try {
+		const portfolio = await prisma.portfolio.findUnique({
+			where: { id: portfolioId }
+		});
+
+		if (!portfolio) {
+			throw new PortfolioError('Portfolio not found', 'NOT_FOUND');
+		}
+
 		let coin = await prisma.coin.findUnique({
 			where: { CoinId: coinId }
 		});
 
 		if (!coin) {
-			await prisma.coin.create({
+			coin = await prisma.coin.create({
 				data: { CoinId: coinId }
 			});
+		}
+
+		const existingPortfolioCoin = await prisma.portfolioCoin.findUnique({
+			where: {
+				portfolioId_coinId: {
+					portfolioId,
+					coinId
+				}
+			}
+		});
+
+		if (existingPortfolioCoin) {
+			return existingPortfolioCoin;
 		}
 
 		const portfolioCoin = await prisma.portfolioCoin.create({

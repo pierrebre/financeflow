@@ -2,13 +2,13 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PortfolioDialog } from './portfolio-dialog';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import PortfolioSelect from './portfolio-select';
 import { Portfolio } from '@/schemas';
 import { DataTable } from '../../dataTable/data-table';
 import { columnsPortfolio } from '../../dataTable/columns-portfolio';
 import AssetDialog from './asset/asset-dialog';
-import { deletePortfolio, getCoinsByPortfolio } from '@/actions/portfolio';
+import { deletePortfolio } from '@/actions/portfolio';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getCoinsWatchlist } from '@/data/coin';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash, PieChart, LineChart } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PortfolioCoinProvider, usePortfolioCoins } from './asset/portfolio-coin-provider';
 
 interface PortfolioListProps {
 	initialPortfolios: Portfolio[];
@@ -36,10 +37,6 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 	useEffect(() => {
 		if (initialPortfolios.length > 0) {
 			setOptimisticPortfolios(initialPortfolios);
-
-			if (!selectedPortfolio) {
-				setSelectedPortfolio(initialPortfolios[0]);
-			}
 		}
 	}, [initialPortfolios, selectedPortfolio]);
 
@@ -49,26 +46,6 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 			setSelectedPortfolio(portfolio);
 		}
 	};
-
-	const { data: portfolioCoins = [], isLoading: isLoadingCoins } = useQuery({
-		queryKey: ['portfolio-coins', selectedPortfolio?.id],
-		queryFn: () => (selectedPortfolio?.id ? getCoinsByPortfolio(selectedPortfolio.id) : Promise.resolve([])),
-		enabled: !!selectedPortfolio?.id
-	});
-
-	const coinIds = useMemo(() => {
-		return portfolioCoins.map((coin: any) => coin.coinId);
-	}, [portfolioCoins]);
-
-	const {
-		data: coinsData = [],
-		isLoading: isLoadingCoinData,
-		isError
-	} = useQuery({
-		queryKey: ['coins-data', coinIds],
-		queryFn: () => (coinIds.length > 0 ? getCoinsWatchlist(coinIds) : Promise.resolve([])),
-		enabled: coinIds.length > 0
-	});
 
 	const handleDeletePortfolio = async () => {
 		if (!selectedPortfolio) return;
@@ -93,7 +70,6 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 		setSelectedPortfolio(updatedPortfolio);
 	};
 
-	const isLoading = isLoadingCoins || isLoadingCoinData;
 	const hasValidPortfolio = !!selectedPortfolio?.id;
 
 	return (
@@ -131,45 +107,33 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 									{selectedPortfolio.description && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{selectedPortfolio.description}</p>}
 								</div>
 
-								<Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full mb-6">
-									<TabsList className="grid grid-cols-2 mb-6">
-										<TabsTrigger value="overview" className="gap-2">
-											<PieChart size={16} /> Overview
-										</TabsTrigger>
-										<TabsTrigger value="assets" className="gap-2">
-											<LineChart size={16} /> Assets
-										</TabsTrigger>
-									</TabsList>
+								<TransactionProvider portfolioId={selectedPortfolio.id}>
+									<PortfolioCoinProvider portfolioId={selectedPortfolio.id}>
+										<Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full mb-6">
+											<TabsList className="grid grid-cols-2 mb-6">
+												<TabsTrigger value="overview" className="gap-2">
+													<PieChart size={16} /> Overview
+												</TabsTrigger>
+												<TabsTrigger value="assets" className="gap-2">
+													<LineChart size={16} /> Assets
+												</TabsTrigger>
+											</TabsList>
 
-									<TabsContent value="overview">
-										<div className="gap-4 md:grid-cols-2">
-											<TransactionProvider portfolioId={selectedPortfolio.id}>
-												<TransactionTable portfolioId={selectedPortfolio.id} />
-											</TransactionProvider>
-										</div>
-									</TabsContent>
+											<TabsContent value="overview">
+												<div className="gap-4 md:grid-cols-2">
+													<TransactionTable portfolioId={selectedPortfolio.id} />
+												</div>
+											</TabsContent>
 
-									<TabsContent value="assets">
-										<div className="flex justify-end mb-4">
-											<AssetDialog portfolioId={selectedPortfolio.id} />
-										</div>
-										{isLoading ? (
-											<div className="space-y-2">
-												{[1, 2, 3].map((i) => (
-													<Skeleton key={i} className="w-full h-16" />
-												))}
-											</div>
-										) : coinsData.length > 0 ? (
-											<DataTable columns={columnsPortfolio} data={coinsData} isForPortfolio={true} portoflioId={selectedPortfolio.id} />
-										) : (
-											<div className="text-center py-10 bg-gray-50 dark:bg-gray-800 rounded-lg">
-												<h3 className="text-lg font-medium mb-2">No assets in this portfolio</h3>
-												<p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Start by adding cryptocurrencies to your portfolio</p>
-												<AssetDialog portfolioId={selectedPortfolio.id} />
-											</div>
-										)}
-									</TabsContent>
-								</Tabs>
+											<TabsContent value="assets">
+												<div className="flex justify-end mb-4">
+													<AssetDialog portfolioId={selectedPortfolio.id} />
+												</div>
+												<AssetsTable portfolioId={selectedPortfolio.id} />
+											</TabsContent>
+										</Tabs>
+									</PortfolioCoinProvider>
+								</TransactionProvider>
 							</motion.div>
 						</AnimatePresence>
 					) : (
@@ -195,4 +159,48 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 			/>
 		</motion.div>
 	);
+}
+
+function AssetsTable({ portfolioId }: { portfolioId: string }) {
+	const { optimisticPortfolioCoins, isLoading: isLoadingCoins } = usePortfolioCoins();
+
+	const coinIds = optimisticPortfolioCoins.map((coin) => coin.coinId);
+
+	const {
+		data: coinsData = [],
+		isLoading: isLoadingCoinData,
+		isError
+	} = useQuery({
+		queryKey: ['coins-data', coinIds],
+		queryFn: () => (coinIds.length > 0 ? getCoinsWatchlist(coinIds) : Promise.resolve([])),
+		enabled: coinIds.length > 0
+	});
+
+	const isLoading = isLoadingCoins || isLoadingCoinData;
+
+	if (isLoading) {
+		return (
+			<div className="space-y-2">
+				{[1, 2, 3].map((i) => (
+					<Skeleton key={i} className="w-full h-16" />
+				))}
+			</div>
+		);
+	}
+
+	if (isError) {
+		return <div className="p-4 text-red-500 bg-red-50 rounded-md">Error loading asset data</div>;
+	}
+
+	if (coinsData.length === 0) {
+		return (
+			<div className="text-center py-10 bg-gray-50 dark:bg-gray-800 rounded-lg">
+				<h3 className="text-lg font-medium mb-2">No assets in this portfolio</h3>
+				<p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Start by adding cryptocurrencies to your portfolio</p>
+				<AssetDialog portfolioId={portfolioId} />
+			</div>
+		);
+	}
+
+	return <DataTable columns={columnsPortfolio} data={coinsData} isForPortfolio={true} portoflioId={portfolioId} />;
 }

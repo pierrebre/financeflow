@@ -2,7 +2,7 @@
 
 import { Transaction } from '@/schemas';
 import { ActionButton } from '@/components/action-button';
-import { Pencil, Trash, Info } from 'lucide-react';
+import { Pencil, Trash, Info, Loader2 } from 'lucide-react';
 import { TransactionDialog } from './transaction-dialog';
 import { formatTransactionForDisplay } from '@/lib/utils';
 import { useState } from 'react';
@@ -19,7 +19,6 @@ interface TransactionItemProps {
 export function TransactionItem({ transaction, coinId, portfolioId, onDelete }: TransactionItemProps) {
 	const [isHovered, setIsHovered] = useState(false);
 	const displayTransaction = formatTransactionForDisplay(transaction);
-
 	const isTemporary = transaction.id.startsWith('temp-');
 
 	return (
@@ -32,7 +31,10 @@ export function TransactionItem({ transaction, coinId, portfolioId, onDelete }: 
 			transition={{ duration: 1.5 }}
 		>
 			<div className="grid grid-cols-6 gap-2 flex-1">
-				<div className={`font-medium text-sm ${transaction.type === 'ACHAT' ? 'text-green-600' : 'text-red-600'}`}>{transaction.type === 'ACHAT' ? 'Achat' : 'Vente'}</div>
+				<div className={`font-medium text-sm ${transaction.type === 'ACHAT' ? 'text-green-600' : 'text-red-600'}`}>
+					{transaction.type === 'ACHAT' ? 'Achat' : 'Vente'}
+					{isTemporary && <Loader2 className="inline-block ml-1 h-3 w-3 animate-spin" />}
+				</div>
 				<div className="text-sm">{displayTransaction.formattedQuantity}</div>
 				<div className="text-sm">{displayTransaction.formattedAmount}</div>
 				<div className="text-sm">{displayTransaction.formattedPrice}</div>
@@ -53,7 +55,6 @@ export function TransactionItem({ transaction, coinId, portfolioId, onDelete }: 
 						</Tooltip>
 					</TooltipProvider>
 				)}
-
 				<div className={`flex gap-2 transition-opacity duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
 					<TransactionDialog
 						portfolioId={portfolioId}
@@ -65,7 +66,7 @@ export function TransactionItem({ transaction, coinId, portfolioId, onDelete }: 
 						triggerIcon={<Pencil size={16} />}
 						triggerLabel="Modifier la transaction"
 					/>
-					<ActionButton icon={Trash} label="Supprimer la transaction" onClick={() => onDelete(transaction)} />
+					<ActionButton icon={<Trash />} label="Supprimer la transaction" onClick={() => onDelete(transaction)} />
 				</div>
 			</div>
 		</motion.div>
