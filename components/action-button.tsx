@@ -3,18 +3,18 @@ import { LucideIcon } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 interface ActionButtonProps {
-	icon: React.ElementType; // Changé de LucideIcon à React.ElementType
-	label?: string; // Rendu optionnel car il manque dans certains appels
+	icon: React.ReactNode;
+	label?: string;
 	onClick?: () => void;
 }
 
-export const ActionButton = ({ icon: Icon, label, onClick }: ActionButtonProps) => {
+export const ActionButton = ({ icon, label, onClick }: ActionButtonProps) => {
 	return (
 		<TooltipProvider>
 			<Tooltip delayDuration={300}>
 				<TooltipTrigger asChild>
 					<button onClick={onClick || undefined} className="p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label={label}>
-						<Icon className="h-4 w-4 text-gray-600" />
+						{icon}
 					</button>
 				</TooltipTrigger>
 				{label && (

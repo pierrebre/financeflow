@@ -17,6 +17,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useRef, useTransition, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
+import { Skeleton } from '../ui/skeleton';
 
 export default function FormProfil() {
 	const { data: session, update, status } = useSession();
@@ -49,7 +51,17 @@ export default function FormProfil() {
 	}, [user, form]);
 
 	if (status === 'loading') {
-		return <div>Loading...</div>;
+		return(
+			<Card>
+				<CardHeader>
+					<CardTitle>About Me</CardTitle>
+					<CardDescription>Tell us about yourself.</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<Skeleton className="h-64 w-full" />
+				</CardContent>
+			</Card>
+		);
 	}
 
 	const onSubmit = async (values: z.infer<typeof SettingsSchema>) => {

@@ -25,7 +25,7 @@ export function CustomTableCell({ cell, row, toggleFavorite, favorites, portofli
 	if (cell.column.id === 'actions') {
 		if (portoflioId) {
 			return (
-				<TransactionProvider portfolioId={portoflioId} coinId={row.original.id}>
+				<TransactionProvider portfolioId={portoflioId}>
 					<PortfolioTableActions row={row} portfolioId={portoflioId} />
 				</TransactionProvider>
 			);

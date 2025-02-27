@@ -22,9 +22,9 @@ export function NoTransactionsPlaceholder({ portfolioId, coinId }: NoTransaction
             <ArrowDown className="h-8 w-8 text-indigo-500" />
           </div>
         </motion.div>
-        <h3 className="text-lg font-medium mb-2">Aucune transaction</h3>
+        <h3 className="text-lg font-medium mb-2">No transaction</h3>
         <p className="text-gray-500 text-center mb-6">
-          Ajoutez une crypto-monnaie à votre portfolio pour commencer à enregistrer des transactions.
+          Add a crypto-currency to your portfolio to start recording transactions.
         </p>
       </div>
     );
@@ -41,9 +41,9 @@ export function NoTransactionsPlaceholder({ portfolioId, coinId }: NoTransaction
           <Plus className="h-8 w-8 text-indigo-500" />
         </div>
       </motion.div>
-      <h3 className="text-lg font-medium mb-2">Aucune transaction</h3>
+      <h3 className="text-lg font-medium mb-2">No transaction</h3>
       <p className="text-gray-500 text-center mb-6">
-        Ajoutez votre première transaction pour cette crypto-monnaie
+        Add your first transaction for this crypto-currency
       </p>
       <TransactionDialog
         portfolioId={portfolioId}

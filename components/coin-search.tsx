@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { InstantSearch, SearchBox, Hits, Configure } from 'react-instantsearch';
 import { searchClient } from '@/lib/algolia/client';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { Button } from './ui/button';
-import { addCoinToPortfolio } from '@/actions/portfolio';
 import Image from 'next/image';
+import { useToast } from '@/hooks/use-toast';
+import { usePortfolioCoins } from './dashboard/portfolio/asset/portfolio-coin-provider';
 
 interface Hit {
 	name: string;
@@ -14,25 +15,60 @@ interface Hit {
 	image: string;
 }
 
-export default function CoinSearch({ portfolioId }: { readonly portfolioId: string | undefined }) {
-	const addCoin = async (hit: Hit, portfolioId: string) => {
-		await addCoinToPortfolio(portfolioId, hit.id).then(() => console.log('coin added'));
+export default function CoinSearch({ portfolioId }: { readonly portfolioId: string }) {
+	const { addCoin, optimisticPortfolioCoins } = usePortfolioCoins();
+	const { toast } = useToast();
+	const [isAdding, setIsAdding] = useState<Record<string, boolean>>({});
+
+	const handleAddCoin = async (hit: Hit) => {
+		// Check if coin already exists in portfolio
+		const coinExists = optimisticPortfolioCoins.some((coin) => coin.coinId === hit.id);
+
+		if (coinExists) {
+			toast({
+				title: 'Coin already exists',
+				description: `${hit.name} is already in your portfolio`,
+				variant: 'destructive'
+			});
+			return;
+		}
+
+		setIsAdding((prev) => ({ ...prev, [hit.id]: true }));
+
+		try {
+			await addCoin(hit.id, portfolioId);
+		} catch (error) {
+			console.error('Error adding coin:', error);
+		} finally {
+			setIsAdding((prev) => ({ ...prev, [hit.id]: false }));
+		}
 	};
 
-	const HitComponent = ({ hit }: { hit: Hit }) => (
-		<div className="p-4 hover:bg-gray-50 flex justify-between">
-			<Link href={`/coin/${hit.id}`} className='flex items-center gap-4'>
-				<Image src={hit.image} alt={hit.name} width={30} height={30} />
-				<div className="ml-2">
-					<p className="font-bold text-gray-900">{hit.name}</p>
-					<p className="text-sm text-gray-600 uppercase">{hit.symbol}</p>
-				</div>
-			</Link>
-			<Button variant="ghost" className="gap-1 p-0" onClick={() => addCoin(hit, portfolioId ?? '')}>
-				<Plus size={16} />
-			</Button>
-		</div>
-	);
+	const HitComponent = ({ hit }: { hit: Hit }) => {
+		const isInPortfolio = optimisticPortfolioCoins.some((coin) => coin.coinId === hit.id);
+
+		return (
+			<div className="p-4 hover:bg-gray-50 flex justify-between items-center">
+				<Link href={`/coin/${hit.id}`} className="flex items-center gap-4">
+					<Image src={hit.image} alt={hit.name} width={30} height={30} />
+					<div className="ml-2">
+						<p className="font-bold text-gray-900">{hit.name}</p>
+						<p className="text-sm text-gray-600 uppercase">{hit.symbol}</p>
+					</div>
+				</Link>
+				<Button variant="ghost" size="sm" className="gap-1" disabled={isInPortfolio || isAdding[hit.id]} onClick={() => handleAddCoin(hit)}>
+					{isInPortfolio ? (
+						'Added'
+					) : (
+						<>
+							<Plus size={16} />
+							{isAdding[hit.id] ? 'Adding...' : 'Add'}
+						</>
+					)}
+				</Button>
+			</div>
+		);
+	};
 
 	return (
 		<div className="w-full max-w-2xl mx-auto bg-white shadow-sm border rounded-lg p-4">

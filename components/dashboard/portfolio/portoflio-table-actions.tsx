@@ -1,6 +1,6 @@
 'use client';
 
-import {  useState } from 'react';
+import { useState } from 'react';
 import { ActionButton } from '@/components/action-button';
 import { ConfirmationDialog } from '@/components/confirmation-dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -29,7 +29,7 @@ export const PortfolioTableActions = ({ row, portfolioId }: PortfolioTableAction
 	const queryClient = useQueryClient();
 
 	const deleteCoinMutation = useMutation({
-			mutationFn: async () => {
+		mutationFn: async () => {
 			if (!row.original.id || !portfolioId) {
 				throw new Error('Missing required IDs for deletion');
 			}
@@ -59,7 +59,7 @@ export const PortfolioTableActions = ({ row, portfolioId }: PortfolioTableAction
 	return (
 		<div className="flex space-x-2 justify-end">
 			<TransactionDialog portfolioId={portfolioId} coinId={row.original.id} />
-			<ActionButton icon={TrashIcon} label="Remove coin" onClick={() => setIsDeleteDialogOpen(true)} />
+			<ActionButton icon={<TrashIcon />} label="Remove coin" onClick={() => setIsDeleteDialogOpen(true)} />
 			<ConfirmationDialog
 				isOpen={isDeleteDialogOpen}
 				onClose={() => setIsDeleteDialogOpen(false)}
