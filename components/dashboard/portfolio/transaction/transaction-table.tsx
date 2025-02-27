@@ -18,12 +18,12 @@ interface TransactionTableProps {
 export default function TransactionTable({ portfolioId, coinId }: TransactionTableProps) {
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
-
 	const { optimisticTransactions, isLoading, error, removeTransaction } = useTransactions();
+
+	const filteredTransactions = coinId ? optimisticTransactions.filter((tx) => tx.portfolioCoin?.coinId === coinId) : optimisticTransactions;
 
 	const handleDeleteTransaction = async () => {
 		if (!selectedTransaction) return;
-
 		await removeTransaction(selectedTransaction.id);
 		setIsDeleteDialogOpen(false);
 		setSelectedTransaction(null);
@@ -46,10 +46,9 @@ export default function TransactionTable({ portfolioId, coinId }: TransactionTab
 
 	return (
 		<div className="space-y-4">
-			{optimisticTransactions.length > 0 ? (
+			{filteredTransactions.length > 0 ? (
 				<>
-					<PortfolioAllocationChart portfolioId={portfolioId} transactions={optimisticTransactions} />
-
+					<PortfolioAllocationChart portfolioId={portfolioId} transactions={filteredTransactions} />
 					<div className="rounded-md border overflow-hidden">
 						<div className="grid grid-cols-6 gap-2 p-3 bg-gray-50 font-medium text-sm">
 							<div>Type</div>
@@ -59,10 +58,9 @@ export default function TransactionTable({ portfolioId, coinId }: TransactionTab
 							<div>Fees</div>
 							<div>Date</div>
 						</div>
-
 						<AnimatePresence initial={false}>
-							{optimisticTransactions.map((transaction) => (
-								<motion.div key={transaction.id} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }}>
+							{filteredTransactions.map((transaction) => (
+								<motion.div key={transaction.id} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: 'easeInOut' }}>
 									<TransactionItem
 										transaction={transaction}
 										coinId={transaction.portfolioCoin?.coinId || coinId || ''}
