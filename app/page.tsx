@@ -7,6 +7,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { Coin } from '@/schemas';
 import { useIntersectionObserver } from '@/lib/hooks/use-intersection-observer';
 
+
 export default function Home() {
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError, isLoading } = useInfiniteQuery<Coin[], Error>({
 		queryKey: ['cryptos'],

@@ -38,7 +38,7 @@ export default function CoinSearch({ portfolioId }: { readonly portfolioId: stri
 		<div className="w-full max-w-2xl mx-auto bg-white shadow-sm border rounded-lg p-4">
 			<InstantSearch indexName="coins" searchClient={searchClient}>
 				<SearchBox
-					placeholder="Rechercher une crypto..."
+					placeholder="Search for a coin"
 					classNames={{
 						root: 'relative w-full',
 						input: 'w-full px-4 py-2 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500',
