@@ -57,9 +57,9 @@ export const PortfolioTableActions = ({ row, portfolioId }: PortfolioTableAction
 	});
 
 	return (
-		<div className="flex space-x-2 justify-end">
+		<div className="flex">
 			<TransactionDialog portfolioId={portfolioId} coinId={row.original.id} />
-			<ActionButton icon={<TrashIcon />} label="Remove coin" onClick={() => setIsDeleteDialogOpen(true)} />
+			<ActionButton icon={<TrashIcon className="h-4 w-4 text-gray-600" />} label="Remove coin" onClick={() => setIsDeleteDialogOpen(true)} />
 			<ConfirmationDialog
 				isOpen={isDeleteDialogOpen}
 				onClose={() => setIsDeleteDialogOpen(false)}

@@ -59,7 +59,7 @@ export function TransactionDialog({ portfolioId, coinId, transaction, triggerIco
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<ActionButton icon={triggerIcon ?? (isEditMode ? <Pencil /> : <Plus />)} label={triggerLabel ?? (isEditMode ? 'Modifier la transaction' : 'Ajouter une transaction')} />
+				<ActionButton icon={triggerIcon ?? (isEditMode ? <Pencil className="h-4 w-4 text-gray-600" /> : <Plus className="h-4 w-4 text-gray-600" />)} label={triggerLabel ?? (isEditMode ? 'Modifier la transaction' : 'Ajouter une transaction')} />
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
