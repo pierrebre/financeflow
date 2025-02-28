@@ -73,7 +73,6 @@ export default function CoinPage({ params }: CoinPageProps) {
 								</div>
 								<div className="flex items-center gap-2 mt-1">
 									<Badge variant="secondary">Rank #{coin.market_cap_rank}</Badge>
-									<span className="text-muted-foreground text-sm">Last updated: {new Date(coin.last_updated).toLocaleString()}</span>
 								</div>
 							</div>
 						</div>
