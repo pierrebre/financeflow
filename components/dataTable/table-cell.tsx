@@ -3,6 +3,7 @@ import { Star } from 'lucide-react';
 import { flexRender } from '@tanstack/react-table';
 import { PortfolioTableActions } from '../dashboard/portfolio/portoflio-table-actions';
 import { TransactionProvider } from '../dashboard/portfolio/transaction/transaction-provider';
+import { TransactionTableActions } from '../dashboard/portfolio/transaction/transaction-table-actions';
 
 interface TableCellProps {
 	cell: any;
@@ -30,6 +31,14 @@ export function CustomTableCell({ cell, row, toggleFavorite, favorites, portofli
 				</TransactionProvider>
 			);
 		}
+	}
+
+	if (cell.column.id === 'transaction-actions') {
+		return (
+			<TransactionProvider portfolioId={portoflioId}>
+				<TransactionTableActions transaction={row.original} portfolioId={portoflioId} coinId={row.original.coinId} />
+			</TransactionProvider>
+		);
 	}
 
 	return <Link href={`/coin/${row.original.id}`}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Link>;
