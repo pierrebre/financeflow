@@ -16,6 +16,7 @@ import { CoinStats } from '@/components/coin/coin-stats';
 import { AllTimeStats } from '@/components/coin/all-time-stats';
 import { PriceHighLow } from '@/components/coin/price-high-low';
 import { CoinPageSkeleton } from '@/components/skeletons/coin-page-skeleton';
+import Image from 'next/image';
 
 interface CoinPageProps {
 	readonly params: {
@@ -60,7 +61,7 @@ export default function CoinPage({ params }: CoinPageProps) {
 				<>
 					<div className="flex flex-col md:flex-row justify-between items-start mb-6">
 						<div className="flex items-center gap-4 mb-4 md:mb-0">
-							{coin.image && <img src={coin.image || '/placeholder.svg'} alt={coin.name} className="w-12 h-12 rounded-full" />}
+							{coin.image && <Image src={coin.image || '/placeholder.svg'} alt={coin.name} width={48} height={48} className="rounded-full" />}
 							<div>
 								<div className="flex items-center gap-3">
 									<h1 className="text-3xl font-bold first-letter:uppercase">{coin.name}</h1>

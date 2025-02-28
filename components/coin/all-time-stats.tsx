@@ -18,11 +18,11 @@ export const AllTimeStats = ({ coin }: { readonly coin: Coin }) => {
 	};
 	const ath = getNumericValue(coin?.ath);
 	const athChangePercentage = getNumericValue(coin?.ath_change_percentage);
-	const athDate = getDateString(coin?.ath_date['usd']);
+	const athDate = getDateString(((coin?.ath_date as unknown) as { [key: string]: any })['usd']);
 
 	const atl = getNumericValue(coin?.atl);
 	const atlChangePercentage = getNumericValue(coin?.atl_change_percentage);
-	const atlDate = getDateString(coin?.atl_date['usd']);
+	const atlDate = getDateString(((coin?.atl_date as unknown) as { [key: string]: any })['usd']);
 
 	return (
 		<Card className="mt-4">
