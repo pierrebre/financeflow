@@ -17,7 +17,7 @@ export const CoinStats = ({ coin }: { readonly coin: Coin }) => (
 								<Info className="h-4 w-4 text-muted-foreground" />
 							</TooltipTrigger>
 							<TooltipContent>
-								<p>Total market value of the coin's circulating supply</p>
+								<p>Total market value of the coin in USD</p>
 							</TooltipContent>
 						</Tooltip>
 					</TooltipProvider>
