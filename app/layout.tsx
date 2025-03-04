@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
-import { cn } from '@/lib/utils';
+import { cn } from '@/src/lib/utils';
 import Providers from './providers';
 import { SessionProvider } from 'next-auth/react';
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/src/components/ui/toaster"
 
 
 import './globals.css';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
+import Navbar from '@/src/components/navbar';
+import Footer from '@/src/components/footer';
 import { Session } from 'next-auth';
 
 const fontSans = FontSans({

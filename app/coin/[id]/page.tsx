@@ -1,7 +1,7 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { getQueryClient } from '@/app/get-query-client';
 import CoinPage from './coin-page';
-import { getCoinData, getPriceHistory } from '@/data/coin';
+import { getCoinData, getPriceHistory } from '@/src/actions/external/crypto';
 
 type Props = {
 	readonly params: {

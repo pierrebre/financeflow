@@ -1,11 +1,11 @@
 'use client';
 
-import { fetchCryptos } from '@/data/coin';
-import { columns } from '../components/dataTable/columns';
-import { DataTable } from '../components/dataTable/data-table';
+import { fetchCryptos } from '@/src/actions/external/crypto';
+import { columns } from '@/src/components/dataTable/columns';
+import { DataTable } from '@/src/components/dataTable/data-table';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Coin } from '@/schemas';
-import { useIntersectionObserver } from '@/lib/hooks/use-intersection-observer';
+import { Coin } from '@/src/schemas/';
+import { useIntersectionObserver } from '@/src/hooks/use-intersection-observer';
 
 
 export default function Home() {
