@@ -1,5 +1,5 @@
-import { getRSSFeed } from '@/actions/rss';
-import { BlogCard } from '@/components/blog/blog-card';
+import { getRSSFeed } from '@/src/actions/external/rss';
+import { BlogCard } from '@/src/components/blog/blog-card';
 
 export default async function Page() {
 	const data = await getRSSFeed(15);

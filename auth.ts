@@ -1,12 +1,11 @@
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 
-import prisma from '@/lib/prisma';
+import prisma from '@/src/lib/prisma';
 import { UserRole } from '@prisma/client';
 import authConfig from './auth-config';
-import { getUserById } from './data/user';
-import { getTwoFactorConfirmationByUserId } from './data/two-factor-confirmation';
-import { getAccountByUserId } from './data/account';
+import { getTwoFactorConfirmationByUserId } from '@/src/repositories/auth/twoFactorConfirmation';
+import { getAccountByUserId, getUserById } from '@/src/repositories/user';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
 	pages: {
@@ -25,7 +24,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		async signIn({ user, account }) {
 			if (account?.provider !== 'credentials') return true;
 
-			// Deny login without email verification
 			const userExists = await getUserById(user.id ?? '');
 
 			if (!userExists?.emailVerified) return false;

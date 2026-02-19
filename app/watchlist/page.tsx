@@ -1,9 +1,9 @@
 'use client';
 
-import { columns } from '@/components/dataTable/columns';
-import { DataTable } from '@/components/dataTable/data-table';
-import { getCoinsWatchlist } from '@/data/coin';
-import useFavoritesManager from '@/lib/hooks/use-favorites';
+import { columns } from '@/src/components/dataTable/columns';
+import { DataTable } from '@/src/components/dataTable/data-table';
+import { getCoinsWatchlist } from '@/src/actions/external/crypto';
+import useFavoritesManager from '@/src/hooks/use-favorites';
 import { useQuery } from '@tanstack/react-query';
 
 export default function Watchlist() {

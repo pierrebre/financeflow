@@ -2,20 +2,20 @@
 
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ChartInterval, Coin, DataPrice } from '@/schemas';
+import { ChartInterval, Coin, DataPrice } from '@/src/schemas';
 import { ArrowDown, ArrowUp, Star } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Button } from '@/components/ui/button';
-import { Chart } from '@/components/chart';
-import Converter from '@/components/converter';
-import useFavorites from '@/lib/hooks/use-favorites';
-import { CoinStats } from '@/components/coin/coin-stats';
-import { AllTimeStats } from '@/components/coin/all-time-stats';
-import { PriceHighLow } from '@/components/coin/price-high-low';
-import { CoinPageSkeleton } from '@/components/skeletons/coin-page-skeleton';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
+import { Badge } from '@/src/components/ui/badge';
+import { ToggleGroup, ToggleGroupItem } from '@/src/components/ui/toggle-group';
+import { Button } from '@/src/components/ui/button';
+import { Chart } from '@/src/components/chart';
+import Converter from '@/src/components/converter';
+import useFavorites from '@/src/hooks/use-favorites';
+import { CoinStats } from '@/src/components/coin/coin-stats';
+import { AllTimeStats } from '@/src/components/coin/all-time-stats';
+import { PriceHighLow } from '@/src/components/coin/price-high-low';
+import { CoinPageSkeleton } from '@/src/components/skeletons/coin-page-skeleton';
 import Image from 'next/image';
 
 interface CoinPageProps {

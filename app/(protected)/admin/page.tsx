@@ -1,4 +1,4 @@
-import { RoleGate } from '@/components/auth/role-gate';
+import { RoleGate } from '@/src/components/auth/role-gate';
 import { UserRole } from '@prisma/client';
 
 const AdminPage = async () => {

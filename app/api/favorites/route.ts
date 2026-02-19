@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../lib/prisma';
-import { getUserById } from '@/data/user';
-import { currentUser } from '@/lib/utils';
+import prisma from '@/src/lib/prisma';
+import { currentUser } from '@/src/lib/utils';
+import { getUserById } from '@/src/repositories/user';
 
 export async function GET(request: Request) {
 	const user = await currentUser();

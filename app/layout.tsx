@@ -1,15 +1,13 @@
 import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
-import { cn } from '@/lib/utils';
+import { cn } from '@/src/lib/utils';
 import Providers from './providers';
 import { SessionProvider } from 'next-auth/react';
-import { Toaster } from "@/components/ui/toaster"
-
+import { Toaster } from "@/src/components/ui/toaster"
 
 import './globals.css';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
-import { Session } from 'next-auth';
+import Navbar from '@/src/components/navbar';
+import Footer from '@/src/components/footer';
 
 const fontSans = FontSans({
 	subsets: ['latin'],
@@ -17,16 +15,30 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-	title: 'FinanceFlow',
-	description: 'FinanceFlow is a web application that provides a platform for tracking and analyzing cryptocurrency data.'
+	title: {
+		default: 'FinanceFlow',
+		template: '%s | FinanceFlow'
+	},
+	description: 'FinanceFlow is a web application that provides a platform for tracking and analyzing cryptocurrency data.',
+	openGraph: {
+		title: 'FinanceFlow',
+		description: 'Track and analyze cryptocurrency data with FinanceFlow.',
+		type: 'website',
+		locale: 'en_US'
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: 'FinanceFlow',
+		description: 'Track and analyze cryptocurrency data with FinanceFlow.'
+	}
 };
 
-export default function RootLayout({ children, session }: Readonly<{ children: React.ReactNode; session: Session }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang="en">
 			<body className={cn('bg-background font-sans antialiased min-h-screen flex flex-col', fontSans.variable)}>
 				<Providers>
-					<SessionProvider session={session}>
+					<SessionProvider>
 						<Toaster />
 						<div className="container mx-auto mt-4 flex-grow">
 							<Navbar />

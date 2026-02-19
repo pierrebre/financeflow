@@ -1,6 +1,6 @@
-import FormProfil from '@/components/dashboard/formProfil';
-import Portfolio from '@/components/dashboard/portfolio/portfolio';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import FormProfil from '@/src/components/dashboard/formProfil';
+import Portfolio from '@/src/components/dashboard/portfolio/portfolio';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
 
 export default function Dashboard() {
 	return (
