@@ -15,10 +15,16 @@ export const TransactionSchema = z.object({
 
 export type TransactionType = z.infer<typeof TransactionTypeSchema>;
 
+export type PortfolioCoinRef = {
+	id: string;
+	coinId: string;
+	portfolioId: string;
+};
+
 export type Transaction = {
 	id: string;
 	portfolioCoinId: string;
-	portfolioCoin?: any;
+	portfolioCoin?: PortfolioCoinRef;
 	quantityCrypto: number;
 	amountUsd: number;
 	type: TransactionType;

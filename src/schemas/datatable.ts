@@ -6,5 +6,5 @@ export interface DataTableProps<TData, TValue> {
 	readonly isLoading?: boolean;
 	readonly isError?: boolean;
 	readonly isForPortfolio?: boolean;
-	readonly portoflioId?: string;
+	readonly portfolioId?: string;
 }

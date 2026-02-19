@@ -10,16 +10,18 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteCoinFromPortfolio } from '@/src/actions/portfolio/portfolioCoin';
 import { TrashIcon } from 'lucide-react';
 
-interface PortfolioTableActionsProps {
-	row: {
-		original: {
-			id: string;
-			coinId: string;
-			name: string;
-			symbol: string;
-			transactions?: Transaction[];
-		};
+export type PortfolioTableActionsRowType = {
+	original: {
+		id: string;
+		coinId: string;
+		name: string;
+		symbol: string;
+		transactions?: Transaction[];
 	};
+};
+
+interface PortfolioTableActionsProps {
+	row: PortfolioTableActionsRowType;
 	portfolioId: string;
 }
 
@@ -63,7 +65,7 @@ export const PortfolioTableActions = ({ row, portfolioId }: PortfolioTableAction
 			<ConfirmationDialog
 				isOpen={isDeleteDialogOpen}
 				onClose={() => setIsDeleteDialogOpen(false)}
-				onConfirm={() => deleteCoinMutation.mutate()}
+				onConfirm={async () => { deleteCoinMutation.mutate(); }}
 				title={`Remove ${row.original.name} (${row.original.symbol.toUpperCase()})`}
 				description={`Are you sure you want to remove ${row.original.name} from your portfolio? All transaction history will be deleted. This action cannot be undone.`}
 				confirmText="Remove Coin"

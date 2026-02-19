@@ -12,27 +12,23 @@ export function useTransactionForm(coinId: string, transaction?: Transaction, on
 	const [isLoading, setIsLoading] = useState(false);
 	const [shouldFetchData, setShouldFetchData] = useState(false);
 
-	const fetchCoinData = async () => {
-		if (!coinId || !shouldFetchData) {
-			return;
-		}
-
-		try {
-			setIsLoading(true);
-			const coinData = await getCoinData(coinId);
-			setCoin(coinData);
-		} catch (error) {
-			console.error('Failed to fetch coin data:', error);
-			setError('Failed to fetch coin data');
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
 	useEffect(() => {
-		if (shouldFetchData) {
-			fetchCoinData();
-		}
+		if (!shouldFetchData || !coinId) return;
+
+		const fetchCoinData = async () => {
+			try {
+				setIsLoading(true);
+				const coinData = await getCoinData(coinId);
+				setCoin(coinData);
+			} catch (error) {
+				console.error('Failed to fetch coin data:', error);
+				setError('Failed to fetch coin data');
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchCoinData();
 	}, [coinId, shouldFetchData]);
 
 	useEffect(() => {

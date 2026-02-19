@@ -13,7 +13,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getCoinsWatchlist } from '@/src/actions/external/crypto';
 import { Button } from '@/src/components/ui/button';
 import { ConfirmationDialog } from '@/src/components/confirmation-dialog';
-import { PortfolioUpdateDialog } from './portoflio-update-dialog';
+import { PortfolioUpdateDialog } from './portfolio-update-dialog';
 import TransactionTable from './transaction/transaction-table';
 import { TransactionProvider } from './transaction/transaction-provider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
@@ -202,5 +202,5 @@ function AssetsTable({ portfolioId }: { portfolioId: string }) {
 		);
 	}
 
-	return <DataTable columns={columnsPortfolio} data={coinsData} isForPortfolio={true} portoflioId={portfolioId} />;
+	return <DataTable columns={columnsPortfolio} data={coinsData} isForPortfolio={true} portfolioId={portfolioId} />;
 }

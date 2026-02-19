@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useMemo, useTransition } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useTransition } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useOptimistic } from 'react';
 import { PortfolioCoin } from '@/src/schemas/'; // Assurez-vous que ce schéma est bien typé
@@ -95,7 +95,7 @@ export function PortfolioCoinProvider({ children, portfolioId }: PortfolioCoinPr
 		}
 	});
 
-	const addCoin = async (coinId: string, portfolioId: string) => {
+	const addCoin = useCallback(async (coinId: string, portfolioId: string) => {
 		const tempCoin: PortfolioCoin = {
 			id: `temp-${Date.now()}`,
 			portfolioId,
@@ -107,9 +107,9 @@ export function PortfolioCoinProvider({ children, portfolioId }: PortfolioCoinPr
 			updateOptimisticCoins({ type: 'add', coin: tempCoin });
 			addMutation.mutate({ coinId, portfolioId });
 		});
-	};
+	}, [addMutation, updateOptimisticCoins, startTransition]);
 
-	const removeCoin = async (coinId: string, portfolioId: string) => {
+	const removeCoin = useCallback(async (coinId: string, portfolioId: string) => {
 		const coinToRemove = portfolioCoins.find((c) => c.coinId === coinId);
 		if (!coinToRemove) return;
 
@@ -124,7 +124,7 @@ export function PortfolioCoinProvider({ children, portfolioId }: PortfolioCoinPr
 
 			await deleteMutation.mutateAsync({ coinId, portfolioId });
 		});
-	};
+	}, [portfolioCoins, optimisticTransactions, deleteMutation, updateOptimisticCoins, removeTransaction, startTransition]);
 
 	const contextValue: PortfolioCoinContextType = useMemo(
 		() => ({

@@ -37,7 +37,7 @@ export default function TransactionTable({ portfolioId, coinId }: TransactionTab
 			{filteredTransactions.length > 0 ? (
 				<>
 					<PortfolioAllocationChart portfolioId={portfolioId} transactions={filteredTransactions} />
-					<DataTable columns={columnsTransaction} data={filteredTransactions} isForPortfolio={true} portoflioId={portfolioId} />
+					<DataTable columns={columnsTransaction} data={filteredTransactions} isForPortfolio={true} portfolioId={portfolioId} />
 				</>
 			) : (
 				<NoTransactionsPlaceholder portfolioId={portfolioId} coinId={coinId} />

@@ -45,11 +45,12 @@ export function TransactionForm({ onSubmit, transaction, coin, isPending, error,
 		}
 	});
 
+	const quantityValue = form.watch('quantityCrypto');
+	const priceValue = form.watch('pricePerCoin');
+
 	const calculatedTotal = useMemo(() => {
-		const quantity = form.watch('quantityCrypto') || 0;
-		const price = form.watch('pricePerCoin') || 0;
-		return quantity * price;
-	}, [form.watch('quantityCrypto'), form.watch('pricePerCoin')]);
+		return (quantityValue || 0) * (priceValue || 0);
+	}, [quantityValue, priceValue]);
 
 	useEffect(() => {
 		if (calculatedTotal !== form.getValues('amountUsd')) {

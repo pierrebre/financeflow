@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Pie, PieChart, Cell, LabelList, Tooltip, ResponsiveContainer } from 'recharts';
+import { Pie, PieChart, Cell, LabelList, Tooltip, ResponsiveContainer, type TooltipProps } from 'recharts';
+import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/src/components/ui/card';
 import { Transaction } from '@/src/schemas/';
 import { useQuery } from '@tanstack/react-query';
@@ -66,14 +67,17 @@ export function PortfolioAllocationChart({ portfolioId, transactions }: { portfo
 		return { chartData: data, totalValue: portfolioTotal };
 	}, [transactions, coins]);
 
-	const CustomTooltip = ({ active, payload }: any) => {
+	const CustomTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) => {
 		if (active && payload && payload.length) {
+			const entry = payload[0];
+			const value = typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value;
+			const chartEntry = entry.payload as { percentage: string; transactions: number };
 			return (
 				<div className="bg-white p-3 border rounded shadow-lg">
-					<p className="font-medium">{payload[0].name}</p>
-					<p className="text-sm font-semibold">{`${payload[0].value.toFixed(2)} USD`}</p>
-					<p className="text-sm">{`${payload[0].payload.percentage}% of portfolio`}</p> {/* Changed from "du portfolio" to "of portfolio" */}
-					<p className="text-xs text-gray-500">{`${payload[0].payload.transactions} transaction(s)`}</p>
+					<p className="font-medium">{entry.name}</p>
+					<p className="text-sm font-semibold">{`${value} USD`}</p>
+					<p className="text-sm">{`${chartEntry.percentage}% of portfolio`}</p>
+					<p className="text-xs text-gray-500">{`${chartEntry.transactions} transaction(s)`}</p>
 				</div>
 			);
 		}
@@ -96,7 +100,7 @@ export function PortfolioAllocationChart({ portfolioId, transactions }: { portfo
 										{chartData.map((entry, index) => (
 											<Cell key={`cell-${index}`} fill={entry.fill} />
 										))}
-										<LabelList dataKey="percentage" position="inside" fill="#fff" fontSize={12} stroke="none" formatter={(value: any) => `${value}%`} />
+										<LabelList dataKey="percentage" position="inside" fill="#fff" fontSize={12} stroke="none" formatter={(value: string | number) => `${value}%`} />
 									</Pie>
 									<Tooltip content={<CustomTooltip />} />
 								</PieChart>

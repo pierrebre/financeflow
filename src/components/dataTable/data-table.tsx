@@ -10,7 +10,7 @@ import { CustomTableCell } from './table-cell';
 import { LoadingSkeleton } from './loading-skeleton';
 import { cn } from '@/src/lib/utils';
 
-export function DataTable<TData, TValue>({ columns, data, isLoading = false, isError = false, isForPortfolio = false, portoflioId }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, isLoading = false, isError = false, isForPortfolio = false, portfolioId }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const { favorites, toggleFavorite } = useFavoritesManager();
 	const memoizedColumns = useMemo(() => columns, [columns]);
@@ -54,7 +54,7 @@ export function DataTable<TData, TValue>({ columns, data, isLoading = false, isE
 							<TableRow key={row.id} data-state={row.getIsSelected() ? 'selected' : undefined}>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>
-										<CustomTableCell cell={cell} row={row} toggleFavorite={toggleFavorite} favorites={favorites} portoflioId={portoflioId ?? ''} />
+										<CustomTableCell cell={cell as Parameters<typeof CustomTableCell>[0]['cell']} row={row as Parameters<typeof CustomTableCell>[0]['row']} toggleFavorite={toggleFavorite} favorites={favorites} portfolioId={portfolioId ?? ''} />
 									</TableCell>
 								))}
 							</TableRow>

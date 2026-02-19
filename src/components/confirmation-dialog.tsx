@@ -6,7 +6,7 @@ import { useToast } from '@/src/hooks/use-toast';
 interface ConfirmationDialogProps {
 	readonly isOpen: boolean;
 	readonly onClose: () => void;
-	readonly onConfirm: any;
+	readonly onConfirm: () => Promise<void>;
 	readonly title: string;
 	readonly description: string;
 	readonly confirmText?: string;
