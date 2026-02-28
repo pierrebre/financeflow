@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ChartInterval, Coin, DataPrice } from '@/src/schemas';
-import { ArrowDown, ArrowUp, Star } from 'lucide-react';
+import { ArrowDown, ArrowUp, Star, Share2, Check } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
 import { Badge } from '@/src/components/ui/badge';
@@ -16,6 +16,7 @@ import { CoinStats } from '@/src/components/coin/coin-stats';
 import { AllTimeStats } from '@/src/components/coin/all-time-stats';
 import { PriceHighLow } from '@/src/components/coin/price-high-low';
 import { CoinPageSkeleton } from '@/src/components/skeletons/coin-page-skeleton';
+import { CoinNotes } from '@/src/components/coin/coin-notes';
 import Image from 'next/image';
 
 interface CoinPageProps {
@@ -26,7 +27,14 @@ interface CoinPageProps {
 
 export default function CoinPage({ params }: CoinPageProps) {
 	const [interval, setInterval] = useState<ChartInterval>('30');
+	const [copied, setCopied] = useState(false);
 	const { favorites, toggleFavorite } = useFavorites();
+
+	const handleShare = async () => {
+		await navigator.clipboard.writeText(window.location.href);
+		setCopied(true);
+		setTimeout(() => setCopied(false), 2000);
+	};
 
 	const queryClient = useQueryClient();
 
@@ -70,6 +78,9 @@ export default function CoinPage({ params }: CoinPageProps) {
 									</Badge>
 									<Button variant="ghost" size="icon" onClick={() => toggleFavorite(params.id)} className="h-8 w-8">
 										<Star className={`h-5 w-5 ${favorites.includes(params.id) ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} aria-pressed={favorites.includes(params.id)} />
+									</Button>
+									<Button variant="ghost" size="icon" onClick={handleShare} className="h-8 w-8" title="Copy link">
+										{copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Share2 className="h-4 w-4 text-muted-foreground" />}
 									</Button>
 								</div>
 								<div className="flex items-center gap-2 mt-1">
@@ -130,14 +141,21 @@ export default function CoinPage({ params }: CoinPageProps) {
 								</TabsContent>
 
 								<TabsContent value="about">
-									<Card>
-										<CardHeader>
-											<CardTitle>About {coin.name}</CardTitle>
-										</CardHeader>
-										<CardContent>
-											<p className="text-muted-foreground">Information about {coin.name} would appear here. This could include a description, use cases, technology, team information, and more.</p>
-										</CardContent>
-									</Card>
+									<div className="space-y-4">
+										<Card>
+											<CardHeader>
+												<CardTitle>About {coin.name}</CardTitle>
+											</CardHeader>
+											<CardContent>
+												<p className="text-muted-foreground">Information about {coin.name} would appear here. This could include a description, use cases, technology, team information, and more.</p>
+											</CardContent>
+										</Card>
+										<Card>
+											<CardContent className="pt-5">
+												<CoinNotes coinId={params.id} />
+											</CardContent>
+										</Card>
+									</div>
 								</TabsContent>
 							</Tabs>
 						</div>

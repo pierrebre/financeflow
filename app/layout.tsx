@@ -8,6 +8,8 @@ import { Toaster } from "@/src/components/ui/toaster"
 import './globals.css';
 import Navbar from '@/src/components/navbar';
 import Footer from '@/src/components/footer';
+import { PriceTicker } from '@/src/components/price-ticker';
+import { CommandPalette } from '@/src/components/command-palette';
 
 const fontSans = FontSans({
 	subsets: ['latin'],
@@ -20,6 +22,7 @@ export const metadata: Metadata = {
 		template: '%s | FinanceFlow'
 	},
 	description: 'FinanceFlow is a web application that provides a platform for tracking and analyzing cryptocurrency data.',
+	manifest: '/manifest.json',
 	openGraph: {
 		title: 'FinanceFlow',
 		description: 'Track and analyze cryptocurrency data with FinanceFlow.',
@@ -40,6 +43,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 				<Providers>
 					<SessionProvider>
 						<Toaster />
+						<CommandPalette />
+						<PriceTicker />
 						<div className="container mx-auto mt-4 flex-grow">
 							<Navbar />
 							{children}
