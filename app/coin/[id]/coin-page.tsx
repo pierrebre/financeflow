@@ -17,6 +17,7 @@ import { AllTimeStats } from '@/src/components/coin/all-time-stats';
 import { PriceHighLow } from '@/src/components/coin/price-high-low';
 import { CoinPageSkeleton } from '@/src/components/skeletons/coin-page-skeleton';
 import { CoinNotes } from '@/src/components/coin/coin-notes';
+import { AddToPortfolioButton } from '@/src/components/coin/add-to-portfolio-button';
 import Image from 'next/image';
 
 interface CoinPageProps {
@@ -67,17 +68,23 @@ export default function CoinPage({ params }: CoinPageProps) {
 				<CoinPageSkeleton />
 			) : (
 				<>
-					<div className="flex flex-col md:flex-row justify-between items-start mb-6">
-						<div className="flex items-center gap-4 mb-4 md:mb-0">
-							{coin.image && <Image src={coin.image || '/placeholder.svg'} alt={coin.name} width={48} height={48} className="rounded-full" />}
+					{/* Coin header */}
+					<div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
+						<div className="flex items-center gap-4">
+							{coin.image && (
+								<Image src={coin.image || '/placeholder.svg'} alt={coin.name} width={48} height={48} className="rounded-full" />
+							)}
 							<div>
-								<div className="flex items-center gap-3">
+								<div className="flex items-center gap-3 flex-wrap">
 									<h1 className="text-3xl font-bold first-letter:uppercase">{coin.name}</h1>
 									<Badge variant="outline" className="uppercase">
 										{coin.symbol}
 									</Badge>
 									<Button variant="ghost" size="icon" onClick={() => toggleFavorite(params.id)} className="h-8 w-8">
-										<Star className={`h-5 w-5 ${favorites.includes(params.id) ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} aria-pressed={favorites.includes(params.id)} />
+										<Star
+											className={`h-5 w-5 ${favorites.includes(params.id) ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`}
+											aria-pressed={favorites.includes(params.id)}
+										/>
 									</Button>
 									<Button variant="ghost" size="icon" onClick={handleShare} className="h-8 w-8" title="Copy link">
 										{copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Share2 className="h-4 w-4 text-muted-foreground" />}
@@ -88,6 +95,9 @@ export default function CoinPage({ params }: CoinPageProps) {
 								</div>
 							</div>
 						</div>
+
+						{/* Add to Portfolio CTA */}
+						<AddToPortfolioButton coinId={params.id} coinName={coin.name} />
 					</div>
 
 					<div className="flex flex-col lg:flex-row gap-6">
@@ -147,7 +157,9 @@ export default function CoinPage({ params }: CoinPageProps) {
 												<CardTitle>About {coin.name}</CardTitle>
 											</CardHeader>
 											<CardContent>
-												<p className="text-muted-foreground">Information about {coin.name} would appear here. This could include a description, use cases, technology, team information, and more.</p>
+												<p className="text-muted-foreground">
+													Information about {coin.name} would appear here. This could include a description, use cases, technology, team information, and more.
+												</p>
 											</CardContent>
 										</Card>
 										<Card>

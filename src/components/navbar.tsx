@@ -8,62 +8,80 @@ import { currentUser } from '@/src/lib/utils';
 import NavLink from './nav-link';
 import MobileMenu from './mobile-menu';
 import { ThemeToggle } from './theme-toggle';
+import { TrendingUp } from 'lucide-react';
+import { CommandPaletteButton } from './command-palette-button';
 
 export default async function Navbar() {
 	const user = await currentUser();
 
 	return (
-		<nav className="flex items-center justify-between lg:mb-16 mb-8 px-4 py-3">
-			<div className="flex items-center">
-				<Link href="/" className="text-xl font-bold hover:text-primary transition-colors">
-					FinanceFlow
+		<header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
+			<nav className="container mx-auto flex items-center justify-between h-14 px-4">
+				{/* Logo */}
+				<Link href="/" className="flex items-center gap-2 font-bold text-base hover:opacity-80 transition-opacity shrink-0">
+					<div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary">
+						<TrendingUp size={15} className="text-primary-foreground" />
+					</div>
+					<span>FinanceFlow</span>
 				</Link>
-			</div>
 
-			<div className="flex items-center">
-				<div className="lg:mx-4 hidden lg:block">
+				{/* Desktop nav links */}
+				<div className="hidden lg:flex items-center">
+					<NavLink href="/">Markets</NavLink>
+					<NavLink href="/dashboard">Dashboard</NavLink>
 					<NavLink href="/watchlist">Watchlist</NavLink>
 					<NavLink href="/blog">Blog</NavLink>
 				</div>
 
-				<DropdownMenu>
-					<DropdownMenuTrigger name="user_icon" aria-label="User button dropdown" className="focus:outline-none">
-						<Avatar className="items-center justify-center bg-muted hover:opacity-80 transition-opacity">
-							<AvatarImage src={user?.image ?? ''} alt={user?.name ?? ''} />
-							<AvatarFallback>
-								<FaUser className="h-5 w-5" />
-							</AvatarFallback>
-						</Avatar>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent className="w-48">
-						<DropdownMenuLabel>Account</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem className="cursor-pointer">
-							<Link href="/dashboard" className="w-full">
-								Dashboard
-							</Link>
-						</DropdownMenuItem>
-						{user?.role === UserRole.ADMIN && (
-							<DropdownMenuItem className="cursor-pointer">
-								<Link href="/admin" className="w-full">
-									Admin
-								</Link>
-							</DropdownMenuItem>
-						)}
-						{user && (
-							<>
-								<DropdownMenuSeparator />
-								<DropdownMenuItem className="cursor-pointer">
-									<SignOut />
-								</DropdownMenuItem>
-							</>
-						)}
-					</DropdownMenuContent>
-				</DropdownMenu>
+				{/* Right actions */}
+				<div className="flex items-center gap-1">
+					<CommandPaletteButton />
+					<ThemeToggle />
 
-				<ThemeToggle />
-				<MobileMenu />
-			</div>
-		</nav>
+					{/* User avatar dropdown */}
+					<DropdownMenu>
+						<DropdownMenuTrigger name="user_icon" aria-label="User menu" className="focus:outline-none ml-1">
+							<Avatar className="h-8 w-8 bg-muted hover:opacity-80 transition-opacity cursor-pointer">
+								<AvatarImage src={user?.image ?? ''} alt={user?.name ?? ''} />
+								<AvatarFallback>
+									<FaUser className="h-4 w-4" />
+								</AvatarFallback>
+							</Avatar>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" className="w-52">
+							{user?.name && (
+								<>
+									<DropdownMenuLabel className="font-normal pb-2">
+										<p className="font-semibold text-sm leading-none">{user.name}</p>
+										{user.email && (
+											<p className="text-xs text-muted-foreground mt-1 truncate">{user.email}</p>
+										)}
+									</DropdownMenuLabel>
+									<DropdownMenuSeparator />
+								</>
+							)}
+							<DropdownMenuItem asChild className="cursor-pointer">
+								<Link href="/dashboard" className="w-full">Dashboard</Link>
+							</DropdownMenuItem>
+							{user?.role === UserRole.ADMIN && (
+								<DropdownMenuItem asChild className="cursor-pointer">
+									<Link href="/admin" className="w-full">Admin</Link>
+								</DropdownMenuItem>
+							)}
+							{user && (
+								<>
+									<DropdownMenuSeparator />
+									<DropdownMenuItem className="cursor-pointer">
+										<SignOut />
+									</DropdownMenuItem>
+								</>
+							)}
+						</DropdownMenuContent>
+					</DropdownMenu>
+
+					<MobileMenu />
+				</div>
+			</nav>
+		</header>
 	);
 }

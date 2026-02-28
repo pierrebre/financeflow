@@ -47,3 +47,10 @@ export async function deletePortfolio(portfolioId: string): Promise<Portfolio> {
 export async function getUserPortfolios(userId: string): Promise<Portfolio[]> {
 	return await getUserPortfoliosWithUserId(userId);
 }
+
+export async function getMyPortfolios(): Promise<Portfolio[]> {
+	const { auth } = await import('@/auth');
+	const session = await auth();
+	if (!session?.user?.id) return [];
+	return await getUserPortfoliosWithUserId(session.user.id);
+}
