@@ -45,10 +45,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 						<Toaster />
 						<CommandPalette />
 						<PriceTicker />
-						<div className="container mx-auto mt-4 flex-grow">
-							<Navbar />
+						<Navbar />
+						<main className="container mx-auto flex-grow px-4 py-6">
 							{children}
-						</div>
+						</main>
 						<Footer />
 					</SessionProvider>
 				</Providers>
