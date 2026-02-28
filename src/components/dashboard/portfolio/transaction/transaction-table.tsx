@@ -1,6 +1,8 @@
 'use client';
 
 import { PortfolioAllocationChart } from '../statistic/portfolio-allocation-chart';
+import { PortfolioKpiCards } from '../statistic/portfolio-kpi-cards';
+import { PortfolioHistoryChart } from '../statistic/portfolio-history-chart';
 import { useTransactions } from './transaction-provider';
 import { Skeleton } from '@/src/components/ui/skeleton';
 import { NoTransactionsPlaceholder } from './no-transactions-placeholder';
@@ -36,6 +38,8 @@ export default function TransactionTable({ portfolioId, coinId }: TransactionTab
 		<div className="space-y-4">
 			{filteredTransactions.length > 0 ? (
 				<>
+					<PortfolioKpiCards />
+					<PortfolioHistoryChart />
 					<PortfolioAllocationChart portfolioId={portfolioId} transactions={filteredTransactions} />
 					<DataTable columns={columnsTransaction} data={filteredTransactions} isForPortfolio={true} portfolioId={portfolioId} />
 				</>

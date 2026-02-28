@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+	transpilePackages: ['cmdk'],
 	images: {
 		remotePatterns: [
 			// CoinGecko coin images

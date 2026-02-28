@@ -1,30 +1,30 @@
 'use client';
 
-import { columns } from '@/src/components/dataTable/columns';
-import { DataTable } from '@/src/components/dataTable/data-table';
 import { getCoinsWatchlist } from '@/src/actions/external/crypto';
 import useFavoritesManager from '@/src/hooks/use-favorites';
 import { useQuery } from '@tanstack/react-query';
+import { WatchlistView } from '@/src/components/watchlist/watchlist-view';
 
 export default function Watchlist() {
-	const { favorites } = useFavoritesManager();
+	const { favorites, toggleFavorite } = useFavoritesManager();
 
-	const {
-		data: coinsWatchlist,
-		isError,
-		isLoading,
-	} = useQuery({
+	const { data: coinsWatchlist = [], isError, isLoading } = useQuery({
 		queryKey: ['coinsWatchlist', favorites],
 		queryFn: () => getCoinsWatchlist(favorites),
-		enabled: favorites.length > 0
+		enabled: favorites.length > 0,
+		refetchInterval: 60_000
 	});
 
 	return (
-		<main className="min-h-screen">
-			<div>
-				<h1 className="scroll-m-20 text-xl font-extrabold tracking-tight lg:text-2xl text-center pb-4">Watchlist</h1>
-				<DataTable columns={columns} data={coinsWatchlist || []} isLoading={isLoading} isError={isError} />
-			</div>
+		<main className="min-h-screen py-6">
+			<h1 className="scroll-m-20 text-2xl font-extrabold tracking-tight mb-6">Watchlist</h1>
+			<WatchlistView
+				coins={coinsWatchlist}
+				favorites={favorites}
+				toggleFavorite={toggleFavorite}
+				isLoading={isLoading && favorites.length > 0}
+				isError={isError}
+			/>
 		</main>
 	);
 }

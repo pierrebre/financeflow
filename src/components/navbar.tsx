@@ -7,6 +7,7 @@ import { UserRole } from '@prisma/client';
 import { currentUser } from '@/src/lib/utils';
 import NavLink from './nav-link';
 import MobileMenu from './mobile-menu';
+import { ThemeToggle } from './theme-toggle';
 
 export default async function Navbar() {
 	const user = await currentUser();
@@ -60,6 +61,7 @@ export default async function Navbar() {
 					</DropdownMenuContent>
 				</DropdownMenu>
 
+				<ThemeToggle />
 				<MobileMenu />
 			</div>
 		</nav>
