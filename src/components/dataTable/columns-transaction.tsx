@@ -1,10 +1,10 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { CoinTable, Transaction } from '@/src/schemas/';
+import { Transaction } from '@/src/schemas/';
 import { formatTransactionForDisplay } from '@/src/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import { Info } from 'lucide-react';
+import { Info, TrendingUp, TrendingDown } from 'lucide-react';
 
 export const columnsTransaction: ColumnDef<Transaction>[] = [
 	{
@@ -50,6 +50,23 @@ export const columnsTransaction: ColumnDef<Transaction>[] = [
 		cell: ({ row }) => {
 			const { formattedDate } = formatTransactionForDisplay(row.original);
 			return <div className="text-gray-500">{formattedDate}</div>;
+		}
+	},
+	{
+		accessorKey: 'pnl',
+		header: 'Realized P&L',
+		cell: ({ row, table }) => {
+			if (row.original.type !== 'VENTE') return <span className="text-muted-foreground text-xs">—</span>;
+			const txPnl = table.options.meta?.pnlByTx?.[row.original.id];
+			if (!txPnl) return <span className="text-muted-foreground text-xs">—</span>;
+			const pos = txPnl.pnl >= 0;
+			return (
+				<div className={`flex items-center gap-1 text-sm font-medium tabular-nums ${pos ? 'text-emerald-500' : 'text-red-500'}`}>
+					{pos ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
+					<span>{pos ? '+' : ''}${txPnl.pnl.toFixed(2)}</span>
+					<span className="text-xs opacity-70">({txPnl.pnlPct.toFixed(1)}%)</span>
+				</div>
+			);
 		}
 	},
 	{

@@ -10,7 +10,7 @@ import { CustomTableCell } from './table-cell';
 import { LoadingSkeleton } from './loading-skeleton';
 import { cn } from '@/src/lib/utils';
 
-export function DataTable<TData, TValue>({ columns, data, isLoading = false, isError = false, isForPortfolio = false, portfolioId }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, isLoading = false, isError = false, isForPortfolio = false, portfolioId, pnlByTx }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const { favorites, toggleFavorite } = useFavoritesManager();
 	const memoizedColumns = useMemo(() => columns, [columns]);
@@ -21,7 +21,8 @@ export function DataTable<TData, TValue>({ columns, data, isLoading = false, isE
 		getCoreRowModel: getCoreRowModel(),
 		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
-		state: { sorting }
+		state: { sorting },
+		meta: { pnlByTx }
 	});
 
 	if (isLoading) {
