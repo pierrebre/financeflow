@@ -3,11 +3,12 @@
 import { useMemo, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { Card, CardContent } from '@/src/components/ui/card';
-import { TrendingUp, TrendingDown, DollarSign, BarChart2, Layers } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Layers, Percent } from 'lucide-react';
 import { useTransactions } from '../transaction/transaction-provider';
 import { usePortfolioCoins } from '../asset/portfolio-coin-provider';
 import { useQuery } from '@tanstack/react-query';
 import { getCoinsWatchlist } from '@/src/actions/external/crypto';
+import { computePortfolioMetrics } from '@/src/lib/portfolio-calculations';
 
 function AnimatedNumber({ value, prefix = '', suffix = '', decimals = 2 }: { value: number; prefix?: string; suffix?: string; decimals?: number }) {
 	const motionVal = useMotionValue(0);
@@ -35,9 +36,10 @@ interface KpiCardProps {
 	decimals?: number;
 	trend?: number | null;
 	colorClass?: string;
+	subtitle?: string;
 }
 
-function KpiCard({ icon, label, value, prefix = '$', suffix = '', decimals = 2, trend, colorClass = 'text-primary' }: KpiCardProps) {
+function KpiCard({ icon, label, value, prefix = '$', suffix = '', decimals = 2, trend, colorClass = 'text-primary', subtitle }: KpiCardProps) {
 	const isPositive = (trend ?? 0) >= 0;
 
 	return (
@@ -56,6 +58,9 @@ function KpiCard({ icon, label, value, prefix = '$', suffix = '', decimals = 2, 
 							{isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
 							<AnimatedNumber value={Math.abs(trend)} prefix="" suffix="%" decimals={2} />
 						</div>
+					)}
+					{subtitle && !trend && (
+						<p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
 					)}
 				</CardContent>
 			</Card>
@@ -76,80 +81,54 @@ export function PortfolioKpiCards() {
 		refetchInterval: 60_000
 	});
 
-	const kpis = useMemo(() => {
-		// Build per-coin holdings: coinId → { quantity, invested }
-		const holdings: Record<string, { quantity: number; invested: number }> = {};
-
-		for (const tx of optimisticTransactions) {
-			const coinId = tx.portfolioCoin?.coinId;
-			if (!coinId) continue;
-
-			if (!holdings[coinId]) holdings[coinId] = { quantity: 0, invested: 0 };
-
-			if (tx.type === 'ACHAT') {
-				holdings[coinId].quantity += tx.quantityCrypto;
-				holdings[coinId].invested += tx.amountUsd + (tx.fees ?? 0);
-			} else {
-				holdings[coinId].quantity -= tx.quantityCrypto;
-				holdings[coinId].invested -= tx.amountUsd - (tx.fees ?? 0);
-			}
-		}
-
-		// Current prices map
+	const metrics = useMemo(() => {
 		const priceMap: Record<string, number> = {};
 		for (const coin of coinsData) {
 			priceMap[coin.id] = coin.current_price ?? 0;
 		}
-
-		let totalInvested = 0;
-		let currentValue = 0;
-		let assetCount = 0;
-
-		for (const [coinId, h] of Object.entries(holdings)) {
-			if (h.quantity <= 0) continue;
-			assetCount++;
-			totalInvested += h.invested;
-			currentValue += h.quantity * (priceMap[coinId] ?? 0);
-		}
-
-		const pnl = currentValue - totalInvested;
-		const pnlPct = totalInvested > 0 ? (pnl / totalInvested) * 100 : 0;
-
-		return { totalInvested, currentValue, pnl, pnlPct, assetCount };
+		return computePortfolioMetrics(optimisticTransactions, priceMap);
 	}, [optimisticTransactions, coinsData]);
 
 	const cards: KpiCardProps[] = [
 		{
 			icon: <DollarSign size={16} />,
-			label: 'Current Value',
-			value: kpis.currentValue,
+			label: 'Portfolio Value',
+			value: metrics.totalCurrentValue,
 			colorClass: 'text-blue-500'
 		},
 		{
 			icon: <Layers size={16} />,
 			label: 'Total Invested',
-			value: kpis.totalInvested,
-			colorClass: 'text-violet-500'
+			value: metrics.totalInvested,
+			colorClass: 'text-violet-500',
+			subtitle: `${metrics.assetCount} asset${metrics.assetCount !== 1 ? 's' : ''}`
 		},
 		{
-			icon: kpis.pnl >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />,
-			label: 'Profit / Loss',
-			value: kpis.pnl,
-			trend: kpis.pnlPct,
-			colorClass: kpis.pnl >= 0 ? 'text-emerald-500' : 'text-red-500'
+			icon: metrics.unrealizedPnL >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />,
+			label: 'Unrealized P&L',
+			value: metrics.unrealizedPnL,
+			trend: metrics.unrealizedPnLPct,
+			colorClass: metrics.unrealizedPnL >= 0 ? 'text-emerald-500' : 'text-red-500'
 		},
 		{
-			icon: <BarChart2 size={16} />,
-			label: 'Assets Held',
-			value: kpis.assetCount,
+			icon: metrics.realizedPnL >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />,
+			label: 'Realized P&L',
+			value: metrics.realizedPnL,
+			colorClass: metrics.realizedPnL >= 0 ? 'text-emerald-500' : 'text-red-500',
+			subtitle: 'FIFO method'
+		},
+		{
+			icon: <Percent size={16} />,
+			label: 'Total ROI',
+			value: metrics.totalROI,
 			prefix: '',
-			decimals: 0,
-			colorClass: 'text-amber-500'
+			suffix: '%',
+			colorClass: metrics.totalROI >= 0 ? 'text-amber-500' : 'text-red-500'
 		}
 	];
 
 	return (
-		<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+		<div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
 			{cards.map((card) => (
 				<KpiCard key={card.label} {...card} />
 			))}
