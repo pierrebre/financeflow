@@ -58,7 +58,8 @@ export function TransactionProvider({ children, portfolioId, coinId }: { childre
 				type: transaction.type,
 				pricePerCoin: transaction.pricePerCoin,
 				fees: transaction.fees ?? 0,
-				note: transaction.note ?? ''
+				note: transaction.note ?? '',
+				date: transaction.date
 			}),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['transactions', portfolioId] });

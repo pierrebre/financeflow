@@ -2,25 +2,30 @@ import React, { useState } from 'react';
 import { InstantSearch, SearchBox, Hits, Configure } from 'react-instantsearch';
 import { searchClient } from '@/src/lib/algolia/client';
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { Plus, Check } from 'lucide-react';
 import { Button } from './ui/button';
 import Image from 'next/image';
 import { useToast } from '@/src/hooks/use-toast';
 import { usePortfolioCoins } from './dashboard/portfolio/asset/portfolio-coin-provider';
 
-interface Hit {
+export interface CoinHit {
 	name: string;
 	symbol: string;
 	id: string;
 	image: string;
 }
 
-export default function CoinSearch({ portfolioId }: { readonly portfolioId: string }) {
+interface CoinSearchProps {
+	readonly portfolioId: string;
+	readonly onSelect?: (coin: CoinHit) => void;
+}
+
+export default function CoinSearch({ portfolioId, onSelect }: CoinSearchProps) {
 	const { addCoin, optimisticPortfolioCoins } = usePortfolioCoins();
 	const { toast } = useToast();
 	const [isAdding, setIsAdding] = useState<Record<string, boolean>>({});
 
-	const handleAddCoin = async (hit: Hit) => {
+	const handleAddCoin = async (hit: CoinHit) => {
 		const coinExists = optimisticPortfolioCoins.some((coin) => coin.coinId === hit.id);
 
 		if (coinExists) {
@@ -43,8 +48,30 @@ export default function CoinSearch({ portfolioId }: { readonly portfolioId: stri
 		}
 	};
 
-	const HitComponent = ({ hit }: { hit: Hit }) => {
+	const HitComponent = ({ hit }: { hit: CoinHit }) => {
 		const isInPortfolio = optimisticPortfolioCoins.some((coin) => coin.coinId === hit.id);
+
+		if (onSelect) {
+			return (
+				<div
+					className="p-3 hover:bg-muted/50 flex justify-between items-center cursor-pointer rounded-md transition-colors"
+					onClick={() => onSelect(hit)}
+				>
+					<div className="flex items-center gap-3">
+						<Image src={hit.image} alt={hit.name} width={28} height={28} className="rounded-full" />
+						<div>
+							<p className="font-medium text-sm">{hit.name}</p>
+							<p className="text-xs text-muted-foreground uppercase">{hit.symbol}</p>
+						</div>
+					</div>
+					{isInPortfolio && (
+						<span className="text-xs text-emerald-500 flex items-center gap-1">
+							<Check size={12} /> In portfolio
+						</span>
+					)}
+				</div>
+			);
+		}
 
 		return (
 			<div className="p-4 hover:bg-gray-50 flex justify-between items-center">

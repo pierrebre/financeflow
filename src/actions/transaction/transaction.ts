@@ -14,10 +14,11 @@ interface AddTransactionParams {
 	pricePerCoin: number;
 	fees?: number;
 	note?: string;
+	date?: Date;
 }
 
 export async function addTransaction(params: AddTransactionParams) {
-	const { portfolioId, coinId, quantityCrypto, amountUsd, type, pricePerCoin, fees, note } = params;
+	const { portfolioId, coinId, quantityCrypto, amountUsd, type, pricePerCoin, fees, note, date } = params;
 	if (!portfolioId || !coinId || !quantityCrypto || !amountUsd || !type || !pricePerCoin) {
 		throw new Error('Missing required transaction parameters');
 	}
@@ -41,7 +42,7 @@ export async function addTransaction(params: AddTransactionParams) {
 			pricePerCoin,
 			fees: fees || 0,
 			note,
-			date: new Date()
+			date: date ?? new Date()
 		}
 	});
 	revalidatePath(`/portfolios/${portfolioId}`);
