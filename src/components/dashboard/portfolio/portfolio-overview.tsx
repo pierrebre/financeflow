@@ -5,7 +5,6 @@ import { PortfolioHistoryChart } from './statistic/portfolio-history-chart';
 import { PortfolioAllocationChart } from './statistic/portfolio-allocation-chart';
 import { AssetSummaryTable } from './asset/asset-summary-table';
 import { useTransactions } from './transaction/transaction-provider';
-import AssetDialog from './asset/asset-dialog';
 
 interface PortfolioOverviewProps {
 	portfolioId: string;
@@ -27,10 +26,7 @@ export function PortfolioOverview({ portfolioId }: PortfolioOverviewProps) {
 
 			{/* Asset table with coin-level drill-down */}
 			<div>
-				<div className="flex items-center justify-between mb-3">
-					<h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Holdings</h3>
-					<AssetDialog portfolioId={portfolioId} />
-				</div>
+				<h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">Holdings</h3>
 				<AssetSummaryTable portfolioId={portfolioId} />
 			</div>
 		</div>

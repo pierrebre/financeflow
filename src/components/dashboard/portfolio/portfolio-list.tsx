@@ -1,8 +1,7 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card';
-import { PortfolioDialog } from './portfolio-dialog';
 import { useEffect, useState } from 'react';
+import { PortfolioDialog } from './portfolio-dialog';
 import PortfolioSelect from './portfolio-select';
 import { Portfolio } from '@/src/schemas/';
 import { deletePortfolio } from '@/src/actions/portfolio/portfolio';
@@ -12,18 +11,22 @@ import { ConfirmationDialog } from '@/src/components/confirmation-dialog';
 import { PortfolioUpdateDialog } from './portfolio-update-dialog';
 import { TransactionProvider } from './transaction/transaction-provider';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash } from 'lucide-react';
+import { Trash, Briefcase } from 'lucide-react';
 import { PortfolioCoinProvider } from './asset/portfolio-coin-provider';
 import { PortfolioOverview } from './portfolio-overview';
+import { Tabs, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
+import { AddTransactionSheet } from './add-transaction-sheet';
 
 interface PortfolioListProps {
 	initialPortfolios: Portfolio[];
 	userId: string;
 }
 
+const MAX_TABS = 4;
+
 export default function PortfolioList({ initialPortfolios, userId }: Readonly<PortfolioListProps>) {
 	const [optimisticPortfolios, setOptimisticPortfolios] = useState<Portfolio[]>(initialPortfolios);
-	const [selectedPortfolio, setSelectedPortfolio] = useState<Portfolio | null>(null);
+	const [selectedPortfolio, setSelectedPortfolio] = useState<Portfolio | null>(initialPortfolios[0] ?? null);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const queryClient = useQueryClient();
 
@@ -31,7 +34,7 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 		if (initialPortfolios.length > 0) {
 			setOptimisticPortfolios(initialPortfolios);
 		}
-	}, [initialPortfolios, selectedPortfolio]);
+	}, [initialPortfolios]);
 
 	const handlePortfolioSelection = (id: string) => {
 		const portfolio = optimisticPortfolios.find((p) => p.id === id);
@@ -57,64 +60,97 @@ export default function PortfolioList({ initialPortfolios, userId }: Readonly<Po
 		setSelectedPortfolio(updatedPortfolio);
 	};
 
+	const useTabs = optimisticPortfolios.length <= MAX_TABS;
 	const hasValidPortfolio = !!selectedPortfolio?.id;
 
 	return (
-		<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-			<Card className="w-full shadow-lg">
-				<CardHeader className="flex flex-row items-center justify-between">
-					<div>
-						<CardTitle className="text-2xl font-bold mb-1">My Portfolios</CardTitle>
-						<CardDescription>Track and manage your cryptocurrency investments</CardDescription>
-					</div>
-					<PortfolioDialog userId={userId} onOptimisticAdd={(p) => setOptimisticPortfolios([...optimisticPortfolios, p])} />
-				</CardHeader>
+		<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="space-y-6">
 
-				<CardContent>
-					<div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-						<div className="w-full md:w-auto">
-							<PortfolioSelect optimisticPortfolios={optimisticPortfolios} selectedPortfolio={selectedPortfolio} onSelect={handlePortfolioSelection} />
-						</div>
-						{selectedPortfolio && (
-							<div className="flex gap-2 self-end md:self-center">
-								<PortfolioUpdateDialog portfolio={selectedPortfolio} onUpdate={handleUpdatePortfolio} />
-								<Button variant="outline" onClick={() => setIsDeleteDialogOpen(true)} className="gap-2">
-									<Trash size={15} /> Delete
-								</Button>
-							</div>
-						)}
-					</div>
+			{/* Page header */}
+			<div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+				<div>
+					<h1 className="text-2xl font-bold">My Portfolios</h1>
+					<p className="text-sm text-muted-foreground mt-0.5">Track and manage your cryptocurrency investments</p>
+				</div>
+				<div className="flex items-center gap-2 shrink-0">
+					<PortfolioDialog
+						userId={userId}
+						onOptimisticAdd={(p) => {
+							setOptimisticPortfolios((prev) => [...prev, p]);
+							setSelectedPortfolio(p);
+						}}
+					/>
+				</div>
+			</div>
 
-					{hasValidPortfolio ? (
-						<AnimatePresence mode="wait">
-							<motion.div key={selectedPortfolio.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-								<div className="mb-6 p-4 bg-muted/40 rounded-lg">
-									<h2 className="text-lg font-semibold">{selectedPortfolio.name}</h2>
-									{selectedPortfolio.description && (
-										<p className="text-sm text-muted-foreground mt-1">{selectedPortfolio.description}</p>
-									)}
-								</div>
-
-								<TransactionProvider portfolioId={selectedPortfolio.id}>
-									<PortfolioCoinProvider portfolioId={selectedPortfolio.id}>
-										<PortfolioOverview portfolioId={selectedPortfolio.id} />
-									</PortfolioCoinProvider>
-								</TransactionProvider>
-							</motion.div>
-						</AnimatePresence>
+			{/* Portfolio switcher */}
+			{optimisticPortfolios.length > 0 && (
+				<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+					{useTabs ? (
+						<Tabs value={selectedPortfolio?.id ?? ''} onValueChange={handlePortfolioSelection}>
+							<TabsList>
+								{optimisticPortfolios.map((p) => (
+									<TabsTrigger key={p.id} value={p.id} className="text-sm">
+										{p.name}
+									</TabsTrigger>
+								))}
+							</TabsList>
+						</Tabs>
 					) : (
-						<div className="text-center py-10 bg-muted/40 rounded-lg">
-							<h3 className="text-lg font-medium">No portfolio selected</h3>
-							<p className="text-sm text-muted-foreground mb-4">
-								{optimisticPortfolios.length > 0 ? 'Select a portfolio from the dropdown' : 'Create a portfolio to get started'}
-							</p>
-							{optimisticPortfolios.length === 0 && (
-								<PortfolioDialog userId={userId} onOptimisticAdd={(p) => setOptimisticPortfolios([...optimisticPortfolios, p])} />
-							)}
+						<PortfolioSelect
+							optimisticPortfolios={optimisticPortfolios}
+							selectedPortfolio={selectedPortfolio}
+							onSelect={handlePortfolioSelection}
+						/>
+					)}
+
+					{selectedPortfolio && (
+						<div className="flex items-center gap-2">
+							<PortfolioUpdateDialog portfolio={selectedPortfolio} onUpdate={handleUpdatePortfolio} />
+							<Button variant="outline" size="sm" onClick={() => setIsDeleteDialogOpen(true)} className="gap-1.5">
+								<Trash size={14} /> Delete
+							</Button>
 						</div>
 					)}
-				</CardContent>
-			</Card>
+				</div>
+			)}
+
+			{/* Portfolio content */}
+			<AnimatePresence mode="wait">
+				{hasValidPortfolio ? (
+					<motion.div key={selectedPortfolio.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+						<TransactionProvider portfolioId={selectedPortfolio.id}>
+							<PortfolioCoinProvider portfolioId={selectedPortfolio.id}>
+								{/* Portfolio-level action bar */}
+								<div className="flex items-center justify-between mb-2">
+									{selectedPortfolio.description ? (
+										<p className="text-sm text-muted-foreground">{selectedPortfolio.description}</p>
+									) : (
+										<span />
+									)}
+									<AddTransactionSheet portfolioId={selectedPortfolio.id} />
+								</div>
+								<PortfolioOverview portfolioId={selectedPortfolio.id} />
+							</PortfolioCoinProvider>
+						</TransactionProvider>
+					</motion.div>
+				) : (
+					<motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+						<div className="text-center py-16 bg-muted/30 rounded-xl border border-dashed">
+							<Briefcase size={40} className="mx-auto text-muted-foreground mb-3" />
+							<h3 className="text-lg font-medium mb-1">No portfolio yet</h3>
+							<p className="text-sm text-muted-foreground mb-4">Create your first portfolio to start tracking your crypto investments</p>
+							<PortfolioDialog
+								userId={userId}
+								onOptimisticAdd={(p) => {
+									setOptimisticPortfolios((prev) => [...prev, p]);
+									setSelectedPortfolio(p);
+								}}
+							/>
+						</div>
+					</motion.div>
+				)}
+			</AnimatePresence>
 
 			<ConfirmationDialog
 				isOpen={isDeleteDialogOpen}

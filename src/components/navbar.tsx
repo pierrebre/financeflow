@@ -63,6 +63,9 @@ export default async function Navbar() {
 							<DropdownMenuItem asChild className="cursor-pointer">
 								<Link href="/dashboard" className="w-full">Dashboard</Link>
 							</DropdownMenuItem>
+							<DropdownMenuItem asChild className="cursor-pointer">
+								<Link href="/settings" className="w-full">Settings</Link>
+							</DropdownMenuItem>
 							{user?.role === UserRole.ADMIN && (
 								<DropdownMenuItem asChild className="cursor-pointer">
 									<Link href="/admin" className="w-full">Admin</Link>
